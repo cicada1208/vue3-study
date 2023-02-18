@@ -1,0 +1,48 @@
+@mixin table-col-fixed {
+  position: sticky !important;
+  position: -webkit-sticky !important;
+  left: 0;
+  z-index: 9998;
+  background: white;
+}
+
+// ::v-deep 深度作用選擇器：例如影響子組件或動態生成的內容(v-html)
+// 使用於 vue <style lang="scss" scoped>，該檔不需使用 ::v-deep
+// .table-col1-fixed ::v-deep table > thead > tr > th:nth-child(1) {
+//   @include table-col-fixed;
+// }
+
+// .table-col1-fixed ::v-deep table > tbody > tr > td:nth-child(1) {
+//   @include table-col-fixed;
+// }
+
+// .table-col1-fixed ::v-deep table > thead > tr > th:nth-child(1) {
+//   z-index: 9999 !important;
+// }
+
+.table-col1-fixed {
+  table > thead > tr > th:nth-child(1) {
+    @include table-col-fixed;
+    z-index: 9999 !important;
+  }
+
+  table > tbody > tr > td:nth-child(1) {
+    @include table-col-fixed;
+  }
+}
+
+.table-header {
+  table > thead {
+    background: #587378 !important;
+    th {
+      background: #587378 !important;
+    }
+    span {
+      color: white !important;
+      font-size: 15px;
+    }
+    i {
+      color: white !important;
+    }
+  }
+}

@@ -1,0 +1,49 @@
+$color-cornsilk: #fff8dc !default;
+$color-basil: #356859 !default;
+$color-pine: #5f9588 !default;
+$color-cadetblue: cadetblue !default;
+$color-terra-cotta: #e07a5f !default;
+$color-candy-pink: #e56b6f !default;
+$color-congo-pink: #f4978e !default;
+// 運送等級：紅
+$color-tsmit-red: #9e5b31 !default;
+// 運送等級：黃
+$color-tsmit-yellow: #9c9146 !default;
+// 運送等級：綠
+$color-tsmit-green: #3d887c !default;
+// 運送等級：預設
+$color-tsmit-def: #3b81a4 !default;
+
+$_colors: (
+  'color-cornsilk': $color-cornsilk,
+  'color-basil': $color-basil,
+  'color-pine': $color-pine,
+  'color-cadetblue': $color-cadetblue,
+  'color-terra-cotta': $color-terra-cotta,
+  'color-candy-pink': $color-candy-pink,
+  'color-congo-pink': $color-congo-pink,
+  'color-tsmit-red': $color-tsmit-red,
+  'color-tsmit-yellow': $color-tsmit-yellow,
+  'color-tsmit-green': $color-tsmit-green,
+  'color-tsmit-def': $color-tsmit-def
+);
+
+@mixin background-color($color_value) {
+  background-color: $color_value !important;
+  border-color: $color_value !important;
+}
+
+@mixin text-color($color_value) {
+  color: $color_value !important;
+  caret-color: $color_value !important;
+}
+
+@each $color_name, $color_value in $_colors {
+  .#{$color_name} {
+    @include background-color($color_value);
+  }
+
+  .#{$color_name}-text {
+    @include text-color($color_value);
+  }
+}

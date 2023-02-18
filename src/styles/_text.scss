@@ -1,0 +1,7 @@
+// 文字直式
+.text-vertical {
+  -webkit-writing-mode: vertical-lr;
+  writing-mode: vertical-lr;
+  writing-mode: tb-lr; /* for ie11 */
+  text-align: center;
+}

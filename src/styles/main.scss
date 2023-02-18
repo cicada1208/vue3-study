@@ -1,0 +1,21 @@
+// @use 與 @import 不同之處:
+// # 無論在項目中使用多少次 @use 'module' 該文件只引用一次。
+// # private members: _ 或 - 開頭的 variable、mixin、function，無法引用。
+// # public members:
+//   需透過 namespace 在當前文件引用，但不會傳遞給之後引用的文件。
+//   例如當前文件 main.scss @use 'color' 在當前文件即可引用 color.$color-terra-cotta；
+//   但若 Home.vue @use 'main'，無法引用 main.$color-terra-cotta，需以 @forward 傳遞。
+
+// _color.scss: _ 開頭的檔案 sass 不會將其編譯成 css。
+
+// @forward:
+// 可將 module _color、_text 的 public members
+// 傳遞至入口文件 main，爾後其他文件引用 @use 'main'
+// 便可以 namespace main 引用 public members。
+// @forward 'module' 中若有 css 也只是被傳遞，直至以 @use 使用時才會被編譯出來。
+
+@forward 'transition';
+@forward 'position';
+@forward 'text';
+@forward 'color';
+@forward 'table';

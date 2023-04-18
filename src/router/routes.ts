@@ -9,13 +9,13 @@ export const paths: IRoute[] = [
   {
     path: '/',
     name: 'Home',
-    view: 'HomeView', //'../views/HomeView.vue',
+    view: '../views/HomeView.vue', //'../views/HomeView.vue',
     title: '首頁'
   },
   {
     path: '/vue-core',
     name: 'VueCore',
-    view: 'VueCore', //'../views/VueCore.vue',
+    view: '../views/test/VueCore.vue', //'../views/VueCore.vue',
     title: 'Vue Core'
   }
 ];

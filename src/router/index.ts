@@ -13,10 +13,15 @@ declare module 'vue-router' {
 }
 
 function setRoute({ path, name, view, ...meta }: IRoute): RouteRecordRaw {
+  // const subs = view.split('/');
+  // const component = `${subs.join(`/`)}`;
+  // console.log('subs:', subs);
+  // console.log('component:', component);
+
   return {
     path,
     name,
-    component: () => import(`../views/${view}.vue`),
+    component: () => import(/* @vite-ignore */ `${view}`),
     meta
   };
 }

@@ -12,12 +12,12 @@ declare module 'vue-router' {
   }
 }
 
-function setRoute({ path, name, view, ...meta }: IRoute): RouteRecordRaw {
-  // const subs = view.split('/');
-  // const component = `${subs.join(`/`)}`;
-  // console.log('subs:', subs);
-  // console.log('component:', component);
+// dynamic-import-vars limitations: https://github.com/rollup/plugins/tree/master/packages/dynamic-import-vars#limitations
+// const path = 'views/test/VueCore';
+// const paths = path.split('/');
+// import(`@/${paths[0]}/${paths[1]}/${paths[2]}.vue`)
 
+function setRoute({ path, name, view, ...meta }: IRoute): RouteRecordRaw {
   return {
     path,
     name,

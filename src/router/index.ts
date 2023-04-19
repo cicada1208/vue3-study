@@ -3,8 +3,7 @@ import {
   createWebHistory,
   type RouteRecordRaw
 } from 'vue-router';
-// import HomeView from '../views/HomeView.vue';
-import { paths, type IRoute } from './routes';
+import { defaultRoutes, type IRoute } from './routes';
 
 declare module 'vue-router' {
   interface RouteMeta {
@@ -12,43 +11,30 @@ declare module 'vue-router' {
   }
 }
 
-// dynamic-import-vars limitations: https://github.com/rollup/plugins/tree/master/packages/dynamic-import-vars#limitations
-// const path = 'views/test/VueCore';
-// const paths = path.split('/');
-// import(`@/${paths[0]}/${paths[1]}/${paths[2]}.vue`)
+// dynamic-import-vars limitations:
+// https://github.com/rollup/plugins/tree/master/packages/dynamic-import-vars#limitations
+// https://cn.vitejs.dev/guide/features.html#glob-import
+const viewComponents = import.meta.glob([
+  '../views/**/*.vue',
+  '../components/**/*.vue'
+]);
 
 function setRoute({ path, name, view, ...meta }: IRoute): RouteRecordRaw {
   return {
     path,
     name,
-    component: () => import(/* @vite-ignore */ `${view}`),
+    component: viewComponents[`${view}`],
     meta
   };
 }
 
-const routes = paths
-  .map(path => setRoute(path))
-  .concat([{ path: '/:notFound(.*)*', name: 'NotFound', redirect: '/' }]);
+const routes = defaultRoutes
+  .map(r => setRoute(r))
+  .concat([{ path: '/:pathMatch(.*)*', name: 'NotFound', redirect: '/' }]);
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes
-  // routes: [
-  //   {
-  //     path: '/',
-  //     name: 'Home',
-  //     component: HomeView
-  //   },
-  //   {
-  //     path: '/vue-core',
-  //     name: 'VueCore',
-  //     // route level code-splitting
-  //     // this generates a separate chunk (About.[hash].js) for this route
-  //     // which is lazy-loaded when the route is visited.
-  //     component: () => import('../views/VueCore.vue')
-  //   },
-  //   { path: '/:notFound(.*)*', name: 'NotFound', redirect: '/' }
-  // ]
 });
 
 router.afterEach(to => {

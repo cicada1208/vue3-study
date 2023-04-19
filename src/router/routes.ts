@@ -5,17 +5,17 @@ export interface IRoute {
   title: string;
 }
 
-export const paths: IRoute[] = [
+export const defaultRoutes: IRoute[] = [
   {
     path: '/',
     name: 'Home',
-    view: '../views/HomeView.vue', //'../views/HomeView.vue',
-    title: '首頁'
+    view: '../views/HomeView.vue',
+    title: 'Home'
   },
   {
     path: '/vue-core',
     name: 'VueCore',
-    view: '../views/test/VueCore.vue', //'../views/VueCore.vue',
-    title: 'Vue Core'
+    view: '../views/test/VueCore.vue',
+    title: 'VueCore'
   }
 ];

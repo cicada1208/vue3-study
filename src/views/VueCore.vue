@@ -24,18 +24,18 @@ const reverseNumbers = computed(() => [...numbers].reverse());
 
 <template>
   <div class="about">
-    <h2>reactive</h2>
+    <h2 id="reactive"><a href="#reactive">reactive</a></h2>
     <button @click="reactiveStateIncrement">
       {{ reactiveState.count }}
     </button>
 
-    <h2>ref</h2>
+    <h2 id="ref"><a href="#ref">ref</a></h2>
     <button @click="refStateIncrement">
       {{ refState.count }}
       <!-- 若 refState 為顶层属性，无需 .value -->
     </button>
 
-    <h2>computed</h2>
+    <h2 id="computed"><a href="#computed">computed</a></h2>
     <ul>
       <li v-for="num in reverseNumbers" :key="num">{{ num }}</li>
     </ul>

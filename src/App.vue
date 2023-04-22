@@ -23,7 +23,12 @@ import HelloWorld from './components/HelloWorld.vue';
     </div>
   </header>
 
-  <RouterView />
+  <!-- <RouterView /> -->
+  <RouterView v-slot="{ Component }">
+    <transition name="slide-fade">
+      <component :is="Component" />
+    </transition>
+  </RouterView>
 </template>
 
 <style lang="scss" scoped>

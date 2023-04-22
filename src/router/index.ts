@@ -36,7 +36,7 @@ const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes,
   scrollBehavior(to, from, savedPosition) {
-    // 若需等待過渡動畫後再滾動，return Promise
+    // 若需等待過渡動畫完成後再滾動，return Promise
     return new Promise(resolve => {
       setTimeout(() => {
         if (to.hash)

@@ -4,13 +4,71 @@
   // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
   "version": "0.2.0",
   "configurations": [
+    // ${file}: the current opened file.
+    // ${workspaceFolder}: the path of the folder opened in VS Code.
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "node:file",
+      "program": "${file}",
+      // outputCapture: if set to std, output from the process stdout/stderr
+      // will be shown in the Debug Console, instead of listening to output
+      // over the debug port. This is useful for programs or log libraries
+      // that write directly to the stdout/stderr streams instead of using
+      // console.* APIs.
+      "outputCapture": "std",
+      "skipFiles": ["<node_internals>/**", "node_modules/**/*.js"]
+    },
     {
       "type": "chrome",
       "request": "launch",
-      "name": "chrome:vue.ts",
+      "name": "chrome:file",
+      "file": "${file}",
+      "skipFiles": ["<node_internals>/**", "node_modules/**/*.js"]
+    },
+    {
+      "type": "chrome",
+      "request": "launch",
+      "name": "chrome:vue2.js",
       "url": "http://localhost:8080",
       "webRoot": "${workspaceFolder}/src",
-      "preLaunchTask": "dev",
+      "breakOnLoad": true,
+      "sourceMaps": true,
+      "sourceMapPathOverrides": {
+        "webpack:///src/*.vue": "${webRoot}/*.vue",
+        "webpack:///./src/*.js": "${webRoot}/*.js"
+      },
+      "preLaunchTask": "vue2:serve",
+      "skipFiles": ["<node_internals>/**", "node_modules/**/*.js", "runtime.js"]
+    },
+    {
+      "type": "chrome",
+      "request": "launch",
+      "name": "chrome:vue2.ts",
+      "url": "http://localhost:8080",
+      "webRoot": "${workspaceFolder}/src",
+      "breakOnLoad": true,
+      "sourceMaps": true,
+      "sourceMapPathOverrides": {
+        "webpack:///./src/*.vue": "${webRoot}/*.vue",
+        "webpack:///./src/*.js": "${webRoot}/*.js",
+        "webpack:///./src/*.ts": "${webRoot}/*.ts"
+      },
+      "preLaunchTask": "vue2:serve",
+      "skipFiles": [
+        "<node_internals>/**",
+        "node_modules/**/*.js",
+        "runtime.js",
+        "**/webpack:/**"
+      ]
+    },
+    {
+      "type": "chrome",
+      "request": "launch",
+      "name": "chrome:vue3.ts",
+      "url": "http://localhost:8080",
+      "webRoot": "${workspaceFolder}/src",
+      "preLaunchTask": "vue3:dev",
       "skipFiles": ["<node_internals>/**", "node_modules/**/*.js", "runtime.js"]
     }
   ]

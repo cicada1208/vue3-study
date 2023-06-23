@@ -3,7 +3,9 @@ import { reactive, ref, computed } from 'vue';
 
 // 创建响应式对象或数组
 // 仅对对象类型有效（对象、数组和 Map、Set 这样的集合类型），而对 string、number 和 boolean 这样的 原始类型 无效。
-const reactiveState = reactive({ count: 0 });
+let reactiveState = reactive({ count: 0 });
+// reactive 的响应是 JavaScript Proxy，只有 property 能追蹤响应。
+// reactiveState = reactive({ count: 99 }); 再次對 reactiveState 赋值會失了响应。
 function reactiveStateIncrement() {
   reactiveState.count++;
 }

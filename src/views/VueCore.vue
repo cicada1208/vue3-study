@@ -1,22 +1,32 @@
 <script setup lang="ts">
-import { reactive, ref, computed } from 'vue';
+import { reactive, ref, computed, watch } from 'vue';
 
 // 创建响应式对象或数组
-// 仅对对象类型有效（对象、数组和 Map、Set 这样的集合类型），而对 string、number 和 boolean 这样的 原始类型 无效。
-let reactiveState = reactive({ count: 0 });
+// 仅对对象类型有效（对象、数组和 Map、Set 这样的集合类型），
+// 而对 string、number 和 boolean 这样的 原始类型 无效。
+const reactiveState = reactive({
+  count: 0,
+  obj: { title: 'test1' }
+});
 // reactive 的响应是 JavaScript Proxy，只有 property 能追蹤响应。
 // reactiveState = reactive({ count: 99 }); 再次對 reactiveState 赋值會失了响应。
 function reactiveStateIncrement() {
   reactiveState.count++;
 }
+// 当直接侦听一个响应式对象时，侦听器会自动启用深层模式
+watch(reactiveState, newState => console.log(newState));
 
 // 定义响应式变量，创建对任意值的 “引用”
 // 并能在不丢失响应性的前提下传递这些引用。
 // const refState = ref(0);
-const refState = ref({ count: 0 });
+const refState = ref({
+  count: 0,
+  obj: { title: 'test1' }
+});
 function refStateIncrement() {
   refState.value.count++;
 }
+watch(refState, newState => console.log(newState), { deep: true });
 
 // 計算函數中不應變更原數組，需先建立副本再行操作
 // 會變更原數組的分法：pop()、push()、shift()、unshift()、splice()、sort()、reverse()

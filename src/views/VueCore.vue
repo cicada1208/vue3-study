@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useDebouncedRef } from '@/libs/debouncedRef';
 import { reactive, ref, computed, watch } from 'vue';
 
 // 创建响应式对象或数组
@@ -32,6 +33,8 @@ watch(refState, newState => console.log(newState), { deep: true });
 // 會變更原數組的分法：pop()、push()、shift()、unshift()、splice()、sort()、reverse()
 const numbers = reactive([1, 2, 3, 4, 5]);
 const reverseNumbers = computed(() => [...numbers].reverse());
+
+const debouncedText = useDebouncedRef('hello', 1000);
 </script>
 
 <template>
@@ -51,6 +54,11 @@ const reverseNumbers = computed(() => [...numbers].reverse());
     <ul>
       <li v-for="num in reverseNumbers" :key="num">{{ num }}</li>
     </ul>
+
+    <h2 id="useDebouncedRef"><a href="#useDebouncedRef">useDebouncedRef</a></h2>
+    <p>This debouncedText only updates 1 second after you've stopped typing:</p>
+    <p>{{ debouncedText }}</p>
+    <input v-model="debouncedText" />
   </div>
 </template>
 

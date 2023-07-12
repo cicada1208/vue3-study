@@ -35,6 +35,14 @@ const numbers = reactive([1, 2, 3, 4, 5]);
 const reverseNumbers = computed(() => [...numbers].reverse());
 
 const debouncedText = useDebouncedRef('hello', 1000);
+
+const theme = reactive({
+  color: 'red'
+});
+function invertTheme() {
+  if (theme.color === 'red') theme.color = 'blue';
+  else theme.color = 'red';
+}
 </script>
 
 <template>
@@ -59,8 +67,18 @@ const debouncedText = useDebouncedRef('hello', 1000);
     <p>This debouncedText only updates 1 second after you've stopped typing:</p>
     <p>{{ debouncedText }}</p>
     <input v-model="debouncedText" />
+
+    <h2 id="cssvbind"><a href="#cssvbind">css v-bind()</a></h2>
+    <div class="themeColor">show theme color</div>
+    <button @click="invertTheme">invert theme</button>
   </div>
 </template>
+
+<style scoped>
+.themeColor {
+  color: v-bind('theme.color');
+}
+</style>
 
 <style>
 @media (min-width: 1024px) {

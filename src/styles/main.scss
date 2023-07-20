@@ -1,5 +1,5 @@
 // @use 與 @import 不同之處:
-// # 無論在項目中使用多少次 @use 'module' 該文件只引用一次。
+// # 無論在項目中使用多少次 @use 'module' 該 module 只會 imported once。
 // # private members: _ 或 - 開頭的 variable、mixin、function，無法引用。
 // # public members:
 //   需透過 namespace 在當前文件引用，但不會傳遞給之後引用的文件。

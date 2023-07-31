@@ -17,5 +17,11 @@ export const defaultRoutes: IRoute[] = [
     name: 'VueCore',
     view: '../views/VueCore.vue',
     title: 'VueCore'
+  },
+  {
+    path: '/vue-use-ex',
+    name: 'VueUseEx',
+    view: '../views/VueUseEx.vue',
+    title: 'VueUseEx'
   }
 ];

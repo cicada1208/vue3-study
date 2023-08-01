@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@vueuse/core": "^10.3.0",
+    "dayjs": "^1.11.9",
     "pinia": "^2.0.28",
     "vue": "^3.3.4",
     "vue-router": "^4.1.6"

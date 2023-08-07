@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useMouse, useTitle, throttleFilter } from '@vueuse/core';
+import { useMouse, useTitle, throttleFilter, useStorage } from '@vueuse/core';
 import { vOnClickOutside } from '@vueuse/components';
 import { ref } from 'vue';
 import dayjs from 'dayjs';
@@ -19,6 +19,14 @@ const showModal = ref(false);
 function closeModal() {
   showModal.value = false;
 }
+
+const defaultStorage = {
+  name: 'Banana',
+  color: 'Yellow',
+  size: 'Medium',
+  count: 0
+};
+const stateStorage = useStorage('vue-use-local-storage', defaultStorage);
 </script>
 
 <template>
@@ -39,6 +47,18 @@ function closeModal() {
     >
       Click outside of modal to close
     </div>
+
+    <h2 id="useStorage"><a href="#useStorage">useStorage</a></h2>
+    <input v-model="stateStorage.name" type="text" />
+    <input v-model="stateStorage.color" type="text" />
+    <input v-model="stateStorage.size" type="text" />
+    <input
+      v-model.number="stateStorage.count"
+      type="range"
+      min="0"
+      step="0.01"
+      max="1000"
+    />
   </div>
 </template>
 

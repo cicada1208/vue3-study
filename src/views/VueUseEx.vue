@@ -34,7 +34,7 @@ const defaultStorage = {
 };
 const stateStorage = useStorage('vue-use-local-storage', defaultStorage);
 
-const url = ref('https://itunes.apple.com/search?term=twice&limit=1');
+const url = ref('https://httpbin.org/get'); // 'https://itunes.apple.com/search?term=twice&limit=1'
 const { data: fetchData, execute: fetchExecute } = useFetch(url, {
   immediate: false
 });

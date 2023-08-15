@@ -4,13 +4,9 @@ import store from '@/store';
 import Msg from '@/models/msg';
 import axios, { AxiosError } from 'axios';
 import apiUrls from './api-urls';
-interface IApiUrl {
-  ndb: string;
-  opState: string;
-  hr: string;
-}
+import type { IApiUrl, AppRun } from './api-urls';
 
-const apiUrl: IApiUrl = apiUrls[process.env.VUE_APP_RUN];
+const apiUrl: IApiUrl = apiUrls[process.env.VUE_APP_RUN as AppRun];
 
 /** set comApi error
  * @param error axios catch error
@@ -25,7 +21,9 @@ function setComApiError(error: AxiosError) {
  * @returns ApiResult
  */
 function setNdbApiError(error: AxiosError): ApiResult {
-  return error.response?.data || new ApiResult({ Msg: error.message });
+  return (
+    (error.response?.data as ApiResult) || new ApiResult({ Msg: error.message })
+  );
 }
 
 // /** comApi response no specific json */

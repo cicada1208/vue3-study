@@ -1,4 +1,12 @@
-export default {
+export type AppRun = 'dev' | 'test' | 'prod';
+
+export interface IApiUrl {
+  ndb: string;
+  opState: string;
+  hr: string;
+}
+
+const apiUrls: Record<AppRun, IApiUrl> = {
   dev: {
     ndb: 'http://localhost:9977/',
     opState: 'https://webf00.cych.org.tw/OPStateApi/',
@@ -17,3 +25,5 @@ export default {
     hr: 'https://webf.cych.org.tw/HrApi/'
   }
 };
+
+export default apiUrls;

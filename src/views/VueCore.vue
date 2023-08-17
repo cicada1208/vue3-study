@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useDebouncedRef } from '@/libs/debouncedRef';
-import { reactive, ref, computed, watch } from 'vue';
+import { reactive, ref, computed, watch, shallowRef } from 'vue';
 
 // 创建响应式对象或数组
 // 仅对对象类型有效（对象、数组和 Map、Set 这样的集合类型），
@@ -43,6 +43,16 @@ function invertTheme() {
   if (theme.color === 'red') theme.color = 'blue';
   else theme.color = 'red';
 }
+
+// shallowRef to reactive
+const stateShallowRef = shallowRef({ title: 'initial data' });
+const stateShallowRefToReactive = reactive(stateShallowRef);
+function asignValueOfShallowRef() {
+  stateShallowRef.value = { title: 'asign value of shallowRef' };
+}
+function asignTitlePropertyOfReactive() {
+  stateShallowRefToReactive.value.title = 'asign title property of reactive';
+}
 </script>
 
 <template>
@@ -71,6 +81,18 @@ function invertTheme() {
     <h2 id="cssvbind"><a href="#cssvbind">css v-bind()</a></h2>
     <div class="themeColor">show theme color</div>
     <button @click="invertTheme">invert theme</button>
+
+    <h2 id="shallowRefToReactive">
+      <a href="#shallowRefToReactive">shallowRef to reactive</a>
+    </h2>
+    <button @click="asignValueOfShallowRef">asign value of shallowRef</button>
+    <button @click="asignTitlePropertyOfReactive">
+      asign title property of reactive
+    </button>
+    <br />
+    {{ `stateShallowRef.title = ${stateShallowRef.title}` }}
+    <br />
+    {{ `stateShallowRefToReactive.title = ${stateShallowRefToReactive.title}` }}
   </div>
 </template>
 

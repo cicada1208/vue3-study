@@ -1,6 +1,6 @@
 import ApiResult from '@/models/api-result';
 import BaseApi from '@/libs/api-util';
-import store from '@/store';
+// import store from '@/store';
 import Msg from '@/models/msg';
 import axios, { AxiosError } from 'axios';
 import apiUrls from './api-urls';
@@ -99,18 +99,18 @@ opStateApi.axios.interceptors.response.use(
   },
   (error: AxiosError) => {
     // 非 2xx 狀態碼觸發該函數
-    const msg = setComApiError(error);
+    // const msg = setComApiError(error);
 
-    if (!axios.isCancel(error)) {
-      store.dispatch(
-        'alert/setMsg',
-        new Msg({
-          show: true,
-          type: 'error',
-          msg
-        })
-      );
-    }
+    // if (!axios.isCancel(error)) {
+    //   store.dispatch(
+    //     'alert/setMsg',
+    //     new Msg({
+    //       show: true,
+    //       type: 'error',
+    //       msg
+    //     })
+    //   );
+    // }
 
     return Promise.reject(error);
   }
@@ -125,18 +125,18 @@ hrApi.axios.interceptors.response.use(
   },
   (error: AxiosError) => {
     // 非 2xx 狀態碼觸發該函數
-    const msg = setComApiError(error);
+    // const msg = setComApiError(error);
 
-    if (!axios.isCancel(error)) {
-      store.dispatch(
-        'alert/setMsg',
-        new Msg({
-          show: true,
-          type: 'error',
-          msg
-        })
-      );
-    }
+    // if (!axios.isCancel(error)) {
+    //   store.dispatch(
+    //     'alert/setMsg',
+    //     new Msg({
+    //       show: true,
+    //       type: 'error',
+    //       msg
+    //     })
+    //   );
+    // }
 
     return Promise.reject(error);
   }

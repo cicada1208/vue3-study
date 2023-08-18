@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useDebouncedRef } from '@/libs/debouncedRef';
-import { reactive, ref, computed, watch, shallowRef } from 'vue';
+import { reactive, ref, computed, watch, shallowRef, type Ref } from 'vue';
 
 // 创建响应式对象或数组
 // 仅对对象类型有效（对象、数组和 Map、Set 这样的集合类型），
@@ -44,14 +44,21 @@ function invertTheme() {
   else theme.color = 'red';
 }
 
-// shallowRef to reactive
-const stateShallowRef = shallowRef({ title: 'initial data' });
-const stateShallowRefToReactive = reactive(stateShallowRef);
-function asignValueOfShallowRef() {
-  stateShallowRef.value = { title: 'asign value of shallowRef' };
+// shallow to deep
+interface IStoD {
+  title?: string;
 }
-function asignTitlePropertyOfReactive() {
-  stateShallowRefToReactive.value.title = 'asign title property of reactive';
+const stodShallowRef = shallowRef<IStoD>({ title: 'initial data' });
+const stodRef: Ref<IStoD> = ref(reactive(stodShallowRef));
+console.log('stodShallowRef', stodShallowRef);
+console.log('stodRef', stodRef);
+const testRef: Ref<IStoD> = ref({ title: 'test' });
+console.log('testRef', testRef);
+function asignValueOfShallowRef() {
+  stodShallowRef.value = { title: 'asign value of shallowRef' };
+}
+function asignTitlePropertyOfDeep() {
+  stodRef.value.title = 'asign title property of deep';
 }
 </script>
 
@@ -82,17 +89,17 @@ function asignTitlePropertyOfReactive() {
     <div class="themeColor">show theme color</div>
     <button @click="invertTheme">invert theme</button>
 
-    <h2 id="shallowRefToReactive">
-      <a href="#shallowRefToReactive">shallowRef to reactive</a>
+    <h2 id="shallowToDeep">
+      <a href="#shallowToDeep">shallow to deep (不確定有無後遺症)</a>
     </h2>
     <button @click="asignValueOfShallowRef">asign value of shallowRef</button>
-    <button @click="asignTitlePropertyOfReactive">
-      asign title property of reactive
+    <button @click="asignTitlePropertyOfDeep">
+      asign title property of deep
     </button>
     <br />
-    {{ `stateShallowRef.title = ${stateShallowRef.title}` }}
+    {{ `stodShallowRef.title = ${stodShallowRef.title}` }}
     <br />
-    {{ `stateShallowRefToReactive.title = ${stateShallowRefToReactive.title}` }}
+    {{ `stodRef.title = ${stodRef.title}` }}
   </div>
 </template>
 

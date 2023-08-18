@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import ApiContent from '@/libs/models/api-content';
-import ApiResult from '@/models/api-result';
+import ApiResult from '@/libs/models/api-result';
 import Users from '@/models/users';
 import { useFetch } from '@vueuse/core';
 import { computed, ref } from 'vue';

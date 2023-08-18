@@ -50,10 +50,6 @@ interface IStoD {
 }
 const stodShallowRef = shallowRef<IStoD>({ title: 'initial data' });
 const stodRef: Ref<IStoD> = ref(reactive(stodShallowRef));
-console.log('stodShallowRef', stodShallowRef);
-console.log('stodRef', stodRef);
-const testRef: Ref<IStoD> = ref({ title: 'test' });
-console.log('testRef', testRef);
 function asignValueOfShallowRef() {
   stodShallowRef.value = { title: 'asign value of shallowRef' };
 }

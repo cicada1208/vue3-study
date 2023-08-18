@@ -1,11 +1,5 @@
 <script setup lang="ts">
-import {
-  useMouse,
-  useTitle,
-  throttleFilter,
-  useStorage,
-  useFetch
-} from '@vueuse/core';
+import { useMouse, useTitle, throttleFilter, useStorage } from '@vueuse/core';
 import { vOnClickOutside } from '@vueuse/components';
 import { ref } from 'vue';
 import dayjs from 'dayjs';
@@ -33,14 +27,6 @@ const defaultStorage = {
   count: 0
 };
 const stateStorage = useStorage('vue-use-local-storage', defaultStorage);
-
-const url = ref('https://httpbin.org/get'); // 'https://itunes.apple.com/search?term=twice&limit=1'
-const { data: fetchData, execute: fetchExecute } = useFetch(url, {
-  immediate: false
-});
-function fetchClick() {
-  fetchExecute();
-}
 </script>
 
 <template>
@@ -73,10 +59,6 @@ function fetchClick() {
       step="0.01"
       max="1000"
     />
-
-    <h2 id="useFetch"><a href="#useFetch">useFetch</a></h2>
-    <button @click="fetchClick">fetch click</button>
-    {{ fetchData }}
   </div>
 </template>
 

@@ -23,5 +23,11 @@ export const defaultRoutes: IRoute[] = [
     name: 'VueUseEx',
     view: '../views/VueUseEx.vue',
     title: 'VueUseEx'
+  },
+  {
+    path: '/api-ex',
+    name: 'ApiEx',
+    view: '../views/ApiEx.vue',
+    title: 'ApiEx'
   }
 ];

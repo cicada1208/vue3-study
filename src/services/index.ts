@@ -1,12 +1,13 @@
 import ApiResult from '@/models/api-result';
 import BaseApi from '@/libs/api-util';
 // import store from '@/store';
-import Msg from '@/models/msg';
-import axios, { AxiosError } from 'axios';
+// import Msg from '@/models/msg';
+// import axios from 'axios';
+import type { AxiosError } from 'axios';
 import apiUrls from './api-urls';
 import type { IApiUrl, AppRun } from './api-urls';
 
-const apiUrl: IApiUrl = apiUrls[process.env.VUE_APP_RUN as AppRun];
+const apiUrl: IApiUrl = apiUrls[import.meta.env.VITE_APP_RUN as AppRun];
 
 /** set comApi error
  * @param error axios catch error
@@ -34,11 +35,11 @@ const ndbApi = new BaseApi(apiUrl.ndb, setNdbApiError);
 ndbApi.axios.interceptors.request.use(
   config => {
     // 在發送請求前做些處理
-    // // const user = JSON.parse(localStorage.getItem('user'));
-    // const user = store.state.auth.user;
-    // if (user?.token) config.headers.Authorization = `Bearer ${user.token}`;
-    const token = store.state.auth.token;
-    if (token) config.headers.Authorization = `Bearer ${token}`;
+    // // // const user = JSON.parse(localStorage.getItem('user'));
+    // // const user = store.state.auth.user;
+    // // if (user?.token) config.headers.Authorization = `Bearer ${user.token}`;
+    // const token = store.state.auth.token;
+    // if (token) config.headers.Authorization = `Bearer ${token}`;
     return config;
   },
   error => {
@@ -50,56 +51,29 @@ ndbApi.axios.interceptors.response.use(
   response => {
     // 2xx 狀態碼觸發該函數
 
-    const rst: ApiResult = response?.data;
-    if (rst && !rst.Succ && rst.Msg) {
-      store.dispatch(
-        'alert/setMsg',
-        new Msg({
-          show: true,
-          type: 'error',
-          msg: rst.Msg
-        })
-      );
-    }
+    // const rst: ApiResult = response?.data;
+    // if (rst && !rst.Succ && rst.Msg) {
+    //   store.dispatch(
+    //     'alert/setMsg',
+    //     new Msg({
+    //       show: true,
+    //       type: 'error',
+    //       msg: rst.Msg
+    //     })
+    //   );
+    // }
 
     return response;
   },
   (error: AxiosError) => {
     // 非 2xx 狀態碼觸發該函數
     // ex: token expired, logout
-    let msg = setNdbApiError(error).Msg;
+    // let msg = setNdbApiError(error).Msg;
 
-    if (error.response?.status === 401) {
-      // alert(`重新登入：${err.response?.data.Msg}`);
-      msg = `重新登入：${msg}`;
-    }
-
-    if (!axios.isCancel(error)) {
-      store.dispatch(
-        'alert/setMsg',
-        new Msg({
-          show: true,
-          type: 'error',
-          msg
-        })
-      );
-    }
-
-    if (error.response?.status === 401) store.dispatch('auth/logout');
-    return Promise.reject(error);
-  }
-);
-
-/** opStateApi response no specific json */
-const opStateApi = new BaseApi(apiUrl.opState, setComApiError);
-opStateApi.axios.interceptors.response.use(
-  response => {
-    // 2xx 狀態碼觸發該函數
-    return response;
-  },
-  (error: AxiosError) => {
-    // 非 2xx 狀態碼觸發該函數
-    // const msg = setComApiError(error);
+    // if (error.response?.status === 401) {
+    //   // alert(`重新登入：${err.response?.data.Msg}`);
+    //   msg = `重新登入：${msg}`;
+    // }
 
     // if (!axios.isCancel(error)) {
     //   store.dispatch(
@@ -112,6 +86,7 @@ opStateApi.axios.interceptors.response.use(
     //   );
     // }
 
+    // if (error.response?.status === 401) store.dispatch('auth/logout');
     return Promise.reject(error);
   }
 );
@@ -142,4 +117,4 @@ hrApi.axios.interceptors.response.use(
   }
 );
 
-export { ndbApi, opStateApi, hrApi };
+export { ndbApi, hrApi };

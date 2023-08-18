@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import ApiContent from '@/models/api-content';
+import ApiContent from '@/libs/models/api-content';
 import ApiResult from '@/models/api-result';
 import Users from '@/models/users';
 import { useFetch } from '@vueuse/core';
@@ -111,3 +111,4 @@ async function fetchUserContent2() {
 </template>
 
 <style scoped></style>
+@/libs/models/api-content @/libs/models/api-result

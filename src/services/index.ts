@@ -1,5 +1,5 @@
-import ApiResult from '@/models/api-result';
-import BaseApi from '@/libs/api-util';
+import ApiResult from '@/libs/models/api-result';
+import { BaseApi } from '@/libs/utils/api-util';
 // import store from '@/store';
 // import Msg from '@/models/msg';
 // import axios from 'axios';

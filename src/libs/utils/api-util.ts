@@ -1,4 +1,4 @@
-import type ApiContent from '@/models/api-content';
+import type ApiContent from '@/libs/models/api-content';
 import axios from 'axios';
 import type { AxiosInstance, AxiosRequestConfig, AxiosError } from 'axios';
 import { convertDate } from './date-util';
@@ -8,7 +8,7 @@ interface ISetApiError {
   (error: AxiosError): any;
 }
 
-export default class BaseApi {
+export class BaseApi {
   baseUrl: string;
   setApiError: ISetApiError;
   axios: AxiosInstance;

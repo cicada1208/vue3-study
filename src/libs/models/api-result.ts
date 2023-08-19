@@ -1,4 +1,4 @@
-import msgConstant from '@/libs/constants/msg-constant';
+import msgConst from '@/libs/consts/msg-const';
 
 export interface IApiResult<TData = unknown> {
   Succ?: boolean;
@@ -18,7 +18,7 @@ export default class ApiResult<TData = unknown> implements IApiResult<TData> {
   constructor({
     Succ = false,
     Code = null,
-    Msg = msgConstant.apiFailure,
+    Msg = msgConst.apiFailure,
     Data = null,
     RowsAffected = 0
   }: IApiResult<TData> = {}) {

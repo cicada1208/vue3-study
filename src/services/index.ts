@@ -4,7 +4,7 @@ import { BaseApi } from '@/libs/utils/api-util';
 // import Msg from '@/models/msg';
 // import axios from 'axios';
 import type { AxiosError } from 'axios';
-import apiUrls from './api-urls';
+import { apiUrls } from './api-urls';
 import type { IApiUrl, AppRun } from './api-urls';
 
 const apiUrl: IApiUrl = apiUrls[import.meta.env.VITE_APP_RUN as AppRun];

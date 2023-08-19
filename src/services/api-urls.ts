@@ -5,21 +5,19 @@ export interface IApiUrl {
   hr: string;
 }
 
-const apiUrls: Record<AppRun, IApiUrl> = {
+export const apiUrls: Record<AppRun, IApiUrl> = {
   dev: {
-    ndb: 'https://webf00.cych.org.tw/NursingDashboardApi', //'http://localhost:9977/',
+    ndb: 'https://webf00.cych.org.tw/NursingDashboardApi/', //'http://localhost:9977/',
     hr: 'https://webf00.cych.org.tw/HrApi/'
   },
   test: {
     // 測試區
-    ndb: 'https://webf00.cych.org.tw/NursingDashboardApi',
+    ndb: 'https://webf00.cych.org.tw/NursingDashboardApi/',
     hr: 'https://webf00.cych.org.tw/HrApi/'
   },
   prod: {
     // 正式區
-    ndb: 'https://webf.cych.org.tw/NursingDashboardApi',
+    ndb: 'https://webf.cych.org.tw/NursingDashboardApi/',
     hr: 'https://webf.cych.org.tw/HrApi/'
   }
 };
-
-export default apiUrls;

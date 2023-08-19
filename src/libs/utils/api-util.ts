@@ -26,8 +26,8 @@ export class BaseApi {
       // }
     });
 
-    // request interceptors：請求前後添加的會先執行。
-    // response interceptors：響應後先添加的會先執行。
+    // request interceptors：請求前，後添加的會先執行。
+    // response interceptors：響應後，先添加的會先執行。
     this.axios.interceptors.response.use(
       response => {
         // 2xx 狀態碼觸發該函數

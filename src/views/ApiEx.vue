@@ -111,4 +111,3 @@ async function fetchUserContent2() {
 </template>
 
 <style scoped></style>
-@/libs/models/api-content @/libs/models/api-result

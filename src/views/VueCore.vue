@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useDebouncedRef } from '@/libs/vueuses/useDebouncedRef';
+import { useDebouncedRef } from '@/libs/vueuse/useDebouncedRef';
 import { reactive, ref, computed, watch, shallowRef, type Ref } from 'vue';
 
 // 创建响应式对象或数组
@@ -114,4 +114,3 @@ function asignTitlePropertyOfDeep() {
   }
 }
 </style>
-@/libs/useDebouncedRef @/libs/vueuses/useDebouncedRef

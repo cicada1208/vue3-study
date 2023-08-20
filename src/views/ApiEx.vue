@@ -24,21 +24,12 @@ const userRst = ref(new ApiResult<Users[]>());
 const userRstUser = computed(() => userRst.value.Data?.[0] ?? new Users());
 
 async function fetchUserRst1() {
-  userRst.value = await ndbApi
-    .getPs(ndbRoutes.Users.GetUsers + 1, {
-      params: new Users({
-        loginId: '10964',
-        isActive: true
-      })
+  userRst.value = await ndbApi.getPs(ndbRoutes.Users.GetUsers + 1, {
+    params: new Users({
+      loginId: '10964',
+      isActive: true
     })
-    .then(r => {
-      console.log('r', r);
-      return r as ApiResult<Users[]>;
-    })
-    .catch(e => {
-      console.log('e', e);
-      return e as ApiResult<Users[]>;
-    });
+  });
 
   log();
 }

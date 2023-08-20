@@ -8,6 +8,14 @@ interface ISetApiError {
   (error: AxiosError): any;
 }
 
+interface IApiOption {
+  /**
+   * 出錯時是否拋出 Exception
+   * @default false
+   */
+  throwOnFailed?: boolean;
+}
+
 export class BaseApi {
   baseUrl: string;
   setApiError: ISetApiError;
@@ -48,11 +56,11 @@ export class BaseApi {
     content: ApiContent<TRst>,
     url: string,
     {
+      method = 'POST',
       params, // url parameters
       data = null, // request body
-      method = 'POST',
       headers,
-      ...restOption
+      ...restAxiosRequestConfig
     }: AxiosRequestConfig = {}
   ): void {
     content.loading = true;
@@ -63,11 +71,11 @@ export class BaseApi {
 
     this.axios({
       url,
+      method,
       params,
       data,
-      method,
       headers,
-      ...restOption
+      ...restAxiosRequestConfig
     })
       .then(response => (content.rst = response.data))
       .catch((error: AxiosError) => {
@@ -95,14 +103,11 @@ export class BaseApi {
   get<TRst>(
     content: ApiContent<TRst>,
     url: string,
-    { params, data = null, headers, ...restOption }: AxiosRequestConfig = {}
+    axiosRequestConfig: AxiosRequestConfig = {}
   ): void {
     this.method<TRst>(content, url, {
-      params,
-      data,
       method: 'GET',
-      headers,
-      ...restOption
+      ...axiosRequestConfig
     });
   }
 
@@ -112,14 +117,11 @@ export class BaseApi {
   post<TRst>(
     content: ApiContent<TRst>,
     url: string,
-    { params, data = null, headers, ...restOption }: AxiosRequestConfig = {}
+    axiosRequestConfig: AxiosRequestConfig = {}
   ): void {
     this.method<TRst>(content, url, {
-      params,
-      data,
       method: 'POST',
-      headers,
-      ...restOption
+      ...axiosRequestConfig
     });
   }
 
@@ -129,14 +131,11 @@ export class BaseApi {
   put<TRst>(
     content: ApiContent<TRst>,
     url: string,
-    { params, data = null, headers, ...restOption }: AxiosRequestConfig = {}
+    axiosRequestConfig: AxiosRequestConfig = {}
   ): void {
     this.method<TRst>(content, url, {
-      params,
-      data,
       method: 'PUT',
-      headers,
-      ...restOption
+      ...axiosRequestConfig
     });
   }
 
@@ -146,14 +145,11 @@ export class BaseApi {
   patch<TRst>(
     content: ApiContent<TRst>,
     url: string,
-    { params, data = null, headers, ...restOption }: AxiosRequestConfig = {}
+    axiosRequestConfig: AxiosRequestConfig = {}
   ): void {
     this.method<TRst>(content, url, {
-      params,
-      data,
       method: 'PATCH',
-      headers,
-      ...restOption
+      ...axiosRequestConfig
     });
   }
 
@@ -163,14 +159,11 @@ export class BaseApi {
   delete<TRst>(
     content: ApiContent<TRst>,
     url: string,
-    { params, data = null, headers, ...restOption }: AxiosRequestConfig = {}
+    axiosRequestConfig: AxiosRequestConfig = {}
   ): void {
     this.method<TRst>(content, url, {
-      params,
-      data,
       method: 'DELETE',
-      headers,
-      ...restOption
+      ...axiosRequestConfig
     });
   }
 
@@ -180,26 +173,28 @@ export class BaseApi {
   methodPs<TRst>(
     url: string,
     {
+      method = 'POST',
       params, // url parameters
       data = null, // request body
-      method = 'POST',
       headers,
-      ...restOption
-    }: AxiosRequestConfig = {}
+      ...restAxiosRequestConfig
+    }: AxiosRequestConfig = {},
+    { throwOnFailed = false }: IApiOption = {}
   ): Promise<TRst> {
     return this.axios({
       url,
+      method,
       params,
       data,
-      method,
       headers,
-      ...restOption
+      ...restAxiosRequestConfig
     })
       .then<TRst>(response => response.data)
       .catch<TRst>(error => {
         const apiError = this.setApiError(error);
         console.error('baseApi.methodPs error:', apiError);
-        return apiError;
+        if (throwOnFailed) return Promise.reject(apiError);
+        else return apiError;
       });
   }
 
@@ -208,15 +203,17 @@ export class BaseApi {
    */
   getPs<TRst>(
     url: string,
-    { params, data = null, headers, ...restOption }: AxiosRequestConfig = {}
+    axiosRequestConfig: AxiosRequestConfig = {},
+    apiOption: IApiOption = {}
   ): Promise<TRst> {
-    return this.methodPs<TRst>(url, {
-      params,
-      data,
-      method: 'GET',
-      headers,
-      ...restOption
-    });
+    return this.methodPs<TRst>(
+      url,
+      {
+        method: 'GET',
+        ...axiosRequestConfig
+      },
+      apiOption
+    );
   }
 
   /** axios return promise
@@ -224,15 +221,17 @@ export class BaseApi {
    */
   postPs<TRst>(
     url: string,
-    { params, data = null, headers, ...restOption }: AxiosRequestConfig = {}
+    axiosRequestConfig: AxiosRequestConfig = {},
+    apiOption: IApiOption = {}
   ): Promise<TRst> {
-    return this.methodPs<TRst>(url, {
-      params,
-      data,
-      method: 'POST',
-      headers,
-      ...restOption
-    });
+    return this.methodPs<TRst>(
+      url,
+      {
+        method: 'POST',
+        ...axiosRequestConfig
+      },
+      apiOption
+    );
   }
 
   /** axios return promise
@@ -240,15 +239,17 @@ export class BaseApi {
    */
   putPs<TRst>(
     url: string,
-    { params, data = null, headers, ...restOption }: AxiosRequestConfig = {}
+    axiosRequestConfig: AxiosRequestConfig = {},
+    apiOption: IApiOption = {}
   ): Promise<TRst> {
-    return this.methodPs<TRst>(url, {
-      params,
-      data,
-      method: 'PUT',
-      headers,
-      ...restOption
-    });
+    return this.methodPs<TRst>(
+      url,
+      {
+        method: 'PUT',
+        ...axiosRequestConfig
+      },
+      apiOption
+    );
   }
 
   /** axios return promise
@@ -256,15 +257,17 @@ export class BaseApi {
    */
   patchPs<TRst>(
     url: string,
-    { params, data = null, headers, ...restOption }: AxiosRequestConfig = {}
+    axiosRequestConfig: AxiosRequestConfig = {},
+    apiOption: IApiOption = {}
   ): Promise<TRst> {
-    return this.methodPs<TRst>(url, {
-      params,
-      data,
-      method: 'PATCH',
-      headers,
-      ...restOption
-    });
+    return this.methodPs<TRst>(
+      url,
+      {
+        method: 'PATCH',
+        ...axiosRequestConfig
+      },
+      apiOption
+    );
   }
 
   /** axios return promise
@@ -272,14 +275,16 @@ export class BaseApi {
    */
   deletePs<TRst>(
     url: string,
-    { params, data = null, headers, ...restOption }: AxiosRequestConfig = {}
+    axiosRequestConfig: AxiosRequestConfig = {},
+    apiOption: IApiOption = {}
   ): Promise<TRst> {
-    return this.methodPs<TRst>(url, {
-      params,
-      data,
-      method: 'DELETE',
-      headers,
-      ...restOption
-    });
+    return this.methodPs<TRst>(
+      url,
+      {
+        method: 'DELETE',
+        ...axiosRequestConfig
+      },
+      apiOption
+    );
   }
 }

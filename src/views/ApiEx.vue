@@ -8,14 +8,19 @@ import { ndbApi } from '@/services';
 import ndbRoutes from '@/services/ndb-routes';
 
 //#region useFetch
-const url = ref('https://httpbin.org/get'); // 'https://itunes.apple.com/search?term=twice&limit=1'
+// 'https://httpbin.org/get'
+// 'https://itunes.apple.com/search?term=twice&limit=1'
+const url = ref('https://itunes.apple.com/search?term=twice&limit=1');
 
 const { data: fetchData, execute: fetchExecute } = useFetch(url, {
   immediate: false
-});
+})
+  .get()
+  .json();
 
-function useFetchClick() {
-  fetchExecute();
+async function useFetchClick() {
+  await fetchExecute();
+  console.log('fetchData.value:', fetchData.value);
 }
 //#endregion
 
@@ -92,11 +97,10 @@ async function fetchUserContent2() {
     <button @click="fetchUserContent1">fetchUserContent1</button>
     <button @click="fetchUserContent2">fetchUserContent2</button><br />
     {{ 'userContent.loading:' + userContent.loading }} <br />
-    {{ 'userContent.Code:' + userContent.rst.Code }} <br />
-    {{ 'userContent.Succ:' + userContent.rst.Succ }} <br />
-    {{ 'userContent.Msg:' + userContent.rst.Msg }} <br />
+    {{ 'userContent.rst.Code:' + userContent.rst.Code }} <br />
+    {{ 'userContent.rst.Succ:' + userContent.rst.Succ }} <br />
+    {{ 'userContent.rst.Msg:' + userContent.rst.Msg }} <br />
     {{ 'userName:' + userContentUser.userName }} <br />
-    {{ 'err:' + (userContent.err ? userContent.rst : '') }}
     <br />
   </div>
 </template>

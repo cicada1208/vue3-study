@@ -2,29 +2,44 @@
 import ApiContent from '@/libs/models/api-content';
 import ApiResult from '@/libs/models/api-result';
 import Users from '@/models/users';
-import { useFetch } from '@vueuse/core';
-import { computed, ref } from 'vue';
+import { until, useFetch } from '@vueuse/core';
+import { computed, ref, watch } from 'vue';
 import { ndbApi } from '@/services';
 import ndbRoutes from '@/services/ndb-routes';
 
 //#region useFetch
+
 // 'https://httpbin.org/get'
 // 'https://itunes.apple.com/search?term=twice&limit=1'
 const url = ref('https://itunes.apple.com/search?term=twice&limit=1');
 
-const { data: fetchData, execute: fetchExecute } = useFetch(url, {
+const {
+  data: fetchData,
+  execute: fetchExecute,
+  isFinished: fetchIsFinished
+} = useFetch(url, {
   immediate: false
 })
   .get()
   .json();
 
 async function useFetchClick() {
-  await fetchExecute();
+  // the 1st way of get fetchData.value
+  // await fetchExecute(); // 待確認 source code
+  // the 2nd way of get fetchData.value
+  fetchExecute();
+  await until(fetchIsFinished).toBe(true);
   console.log('fetchData.value:', fetchData.value);
 }
+// the 3rd way of get fetchData.value
+// watch(fetchIsFinished, () => {
+//   if (fetchIsFinished) console.log('fetchData.value:', fetchData.value);
+// });
+
 //#endregion
 
 //#region apiUtil
+
 const userRst = ref(new ApiResult<Users[]>());
 const userRstUser = computed(() => userRst.value.Data?.[0] ?? new Users());
 
@@ -78,6 +93,7 @@ async function fetchUserContent2() {
     }
   });
 }
+
 //#endregion
 </script>
 

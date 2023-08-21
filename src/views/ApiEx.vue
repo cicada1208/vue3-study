@@ -12,8 +12,8 @@ import axios from 'axios';
 
 //#region useFetch
 
-// 'https://httpbin.org/get'
-// 'https://itunes.apple.com/search?term=twice&limit=1'
+// https://httpbin.org/get
+// https://itunes.apple.com/search?term=twice&limit=1
 // https://webf00.cych.org.tw/NursingDashboardApi/NisPatInfo/1?clinicalUnitId=SI
 const url = ref(
   'https://webf00.cych.org.tw/NursingDashboardApi/NisPatInfo/1?clinicalUnitId=SI'
@@ -33,7 +33,7 @@ const {
   .get()
   .json();
 
-async function useFetchClick() {
+async function useFetchExecute() {
   // the 1st way of get fetchData.value
   // await fetchExecute(); // 待確認 source code
   // the 2nd way of get fetchData.value
@@ -47,7 +47,7 @@ async function useFetchClick() {
 //   if (fetchIsFinished) console.log('fetchData.value:', fetchData.value);
 // });
 
-async function useFetchAbortClick() {
+async function useFetchAbort() {
   if (fetchCanAbort.value) {
     console.log('fetchAbort');
     fetchAbort();
@@ -59,7 +59,9 @@ watch(fetchIsFetching, () => {
     'fetchIsFetching.value:',
     fetchIsFetching.value,
     'fetchAborted.value:',
-    fetchAborted.value
+    fetchAborted.value,
+    'fetchIsFinished.value',
+    fetchIsFinished.value
   );
 });
 
@@ -68,17 +70,19 @@ watch(fetchAborted, () => {
     'fetchAborted.value:',
     fetchAborted.value,
     'fetchIsFetching.value:',
-    fetchIsFetching.value
+    fetchIsFetching.value,
+    'fetchIsFinished.value',
+    fetchIsFinished.value
   );
 });
 
-const nisPatInfoConten = ref(new ApiContent<ApiResult<NisPatInfo[]>>());
+const nisPatInfoContent = ref(new ApiContent<ApiResult<NisPatInfo[]>>());
 let nisPatInfoCancel: CancelTokenSource = null;
-async function fetchNisPatInfoConten() {
-  if (nisPatInfoCancel) nisPatInfoCancel.cancel('nisPatInfo cancel');
+async function fetchNisPatInfoContent() {
+  nisPatInfoCancel?.cancel('nisPatInfo cancel');
   nisPatInfoCancel = axios.CancelToken.source();
 
-  ndbApi.get(nisPatInfoConten.value, ndbRoutes.NisPatInfo.GetNisPatInfo + 1, {
+  ndbApi.get(nisPatInfoContent.value, ndbRoutes.NisPatInfo.GetNisPatInfo + 1, {
     params: {
       clinicalUnitId: 'SI'
     },
@@ -101,7 +105,7 @@ async function fetchUserRst1() {
     })
   });
 
-  log();
+  logUserRst();
 }
 
 async function fetchUserRst2() {
@@ -112,10 +116,10 @@ async function fetchUserRst2() {
     })
   });
 
-  log();
+  logUserRst();
 }
 
-function log() {
+function logUserRst() {
   console.log('userRst.value:', userRst.value);
   console.log('userRstUser.value:', userRstUser.value);
   console.log('userRstUser.value.userName:', userRstUser.value.userName);
@@ -150,15 +154,16 @@ async function fetchUserContent2() {
 <template>
   <div>
     <h2 id="useFetch"><a href="#useFetch">useFetch</a></h2>
-    <button @click="useFetchClick">useFetch click</button>
-    <button @click="useFetchAbortClick">useFetch abort click</button>
+    <button @click="useFetchExecute">useFetchExecute</button>
+    <button @click="useFetchAbort">useFetchAbort</button>
     {{ fetchData }}
-
     <br />
-    <button @click="fetchNisPatInfoConten">fetchNisPatInfoConten</button><br />
-    {{ `nisPatInfoConten.loading: ${nisPatInfoConten.loading}` }}<br />
-    {{ `nisPatInfoConten.rst:` }}
-    {{ nisPatInfoConten.rst.Data }}
+
+    <button @click="fetchNisPatInfoContent">fetchNisPatInfoContent</button
+    ><br />
+    {{ `nisPatInfoConten.loading: ${nisPatInfoContent.loading}` }}<br />
+    {{ `nisPatInfoContent.rst.Data:` }}
+    {{ nisPatInfoContent.rst.Data }}
 
     <h2 id="apiUtil"><a href="#apiUtil">apiUtil</a></h2>
     <button @click="fetchUserRst1">fetchUserRst1</button>
@@ -166,15 +171,14 @@ async function fetchUserContent2() {
     {{ 'userRst.Code:' + userRst.Code }} <br />
     {{ 'userRst.Succ:' + userRst.Succ }} <br />
     {{ 'userRst.Msg:' + userRst.Msg }} <br />
-    {{ 'userName:' + userRstUser.userName }} <br />
+    {{ 'userRstUser.userName:' + userRstUser.userName }} <br />
     <button @click="fetchUserContent1">fetchUserContent1</button>
     <button @click="fetchUserContent2">fetchUserContent2</button><br />
     {{ 'userContent.loading:' + userContent.loading }} <br />
     {{ 'userContent.rst.Code:' + userContent.rst.Code }} <br />
     {{ 'userContent.rst.Succ:' + userContent.rst.Succ }} <br />
     {{ 'userContent.rst.Msg:' + userContent.rst.Msg }} <br />
-    {{ 'userName:' + userContentUser.userName }} <br />
-    <br />
+    {{ 'userContentUser.userName:' + userContentUser.userName }} <br />
   </div>
 </template>
 

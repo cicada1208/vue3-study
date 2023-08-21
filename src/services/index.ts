@@ -11,10 +11,10 @@ const apiUrl: IApiUrl = apiUrls[import.meta.env.VITE_APP_RUN as AppRun];
 
 /** set comApi error
  * @param error axios catch error
- * @returns any or error.message
+ * @returns error.response?.data or error.message or error.name
  */
 function setComApiError(error: AxiosError) {
-  return error.response?.data || error.message;
+  return error.response?.data || error.message || error.name;
 }
 
 /** set ndbApi error
@@ -23,7 +23,8 @@ function setComApiError(error: AxiosError) {
  */
 function setNdbApiError(error: AxiosError): ApiResult {
   return (
-    (error.response?.data as ApiResult) || new ApiResult({ Msg: error.message })
+    (error.response?.data as ApiResult) ||
+    new ApiResult({ Msg: error.message || error.name })
   );
 }
 

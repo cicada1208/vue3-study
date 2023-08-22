@@ -14,10 +14,11 @@ import ndbRoutes from '@/services/ndb-routes';
 // https://itunes.apple.com/search?term=twice&limit=1
 // https://hub.dummyapis.com/delay?seconds=60
 // https://webf00.cych.org.tw/NursingDashboardApi/NisPatInfo/1?clinicalUnitId=SI
-const url = ref('https://hub.dummyapis.com/delay?seconds=60');
+const url = ref('https://hub.dummyapis.com/delay?seconds=5');
 
 const {
   data: fetchData,
+  error: fetchError,
   execute: fetchExecute,
   isFinished: fetchIsFinished,
   isFetching: fetchIsFetching,
@@ -31,13 +32,22 @@ const {
   .text();
 
 async function useFetchExecute() {
+  // execute 連續執行目前有 bug: isFetching 狀態不正確，且最後 data、error 都有資料
+
   // the 1st way of get fetchData.value
   await fetchExecute();
+
   // the 2nd way of get fetchData.value
   // fetchExecute();
   // await until(fetchIsFinished).toBe(true);
-  console.log('fetchData.value:', fetchData.value);
-  // AbortController 不會進 catch，但會進 finally ?
+
+  console.log(
+    '[useFetchExecute result]',
+    'fetchData.value:',
+    fetchData.value,
+    'fetchError.value:',
+    fetchError.value
+  );
 }
 
 // the 3rd way of get fetchData.value
@@ -47,33 +57,42 @@ async function useFetchExecute() {
 
 async function useFetchAbort() {
   if (fetchCanAbort.value) {
-    console.log('fetchAbort');
+    console.log('[useFetchAbort start]');
     fetchAbort();
+    await until(fetchIsFinished).toBe(true);
+    console.log(
+      '[useFetchAbort result]',
+      'fetchData.value:',
+      fetchData.value,
+      'fetchError.value:',
+      fetchError.value
+    );
   }
 }
 
 watch(fetchIsFetching, () => {
   console.log(
+    '[watch fetchIsFetching]',
     'fetchIsFetching.value:',
     fetchIsFetching.value,
+    'fetchIsFinished.value:',
+    fetchIsFinished.value,
     'fetchAborted.value:',
-    fetchAborted.value,
-    'fetchIsFinished.value',
-    fetchIsFinished.value
+    fetchAborted.value
   );
 });
 
 watch(fetchAborted, () => {
   console.log(
-    'fetchAborted.value:',
-    fetchAborted.value,
+    '[watch fetchAborted]',
     'fetchIsFetching.value:',
     fetchIsFetching.value,
-    'fetchIsFinished.value',
-    fetchIsFinished.value
+    'fetchIsFinished.value:',
+    fetchIsFinished.value,
+    'fetchAborted.value:',
+    fetchAborted.value
   );
 });
-
 //#endregion
 
 //#region apiUtil

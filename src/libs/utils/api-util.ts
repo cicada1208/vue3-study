@@ -64,9 +64,9 @@ export class BaseApi {
     }: AxiosRequestConfig = {}
   ): void {
     content.loading = true;
+    content.err = false;
     // 不清空資料，對於較花時間的查詢可同時顯示 loading 及資料
     // content.rst = {} as TRst;
-    content.err = false;
     let cancel = false;
 
     this.axios({
@@ -78,7 +78,10 @@ export class BaseApi {
       cancelToken: content.cancelTokenSource?.token,
       ...restAxiosRequestConfig
     })
-      .then(response => (content.rst = response.data))
+      .then(response => {
+        content.err = false;
+        content.rst = response.data;
+      })
       .catch((error: AxiosError) => {
         if (axios.isCancel(error)) {
           cancel = true;

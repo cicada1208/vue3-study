@@ -28,15 +28,16 @@ const {
   immediate: false
 })
   .get()
-  .json();
+  .text();
 
 async function useFetchExecute() {
   // the 1st way of get fetchData.value
-  // await fetchExecute(); // 待確認 source code
+  await fetchExecute();
   // the 2nd way of get fetchData.value
-  fetchExecute();
-  await until(fetchIsFinished).toBe(true);
+  // fetchExecute();
+  // await until(fetchIsFinished).toBe(true);
   console.log('fetchData.value:', fetchData.value);
+  // AbortController 不會進 catch，但會進 finally ?
 }
 
 // the 3rd way of get fetchData.value
@@ -73,6 +74,10 @@ watch(fetchAborted, () => {
   );
 });
 
+//#endregion
+
+//#region apiUtil
+
 const nisPatInfoContent = ref(new ApiContent<ApiResult<NisPatInfo[]>>());
 async function cancelThenFetchNisPatInfoContent() {
   nisPatInfoContent.value.cancel('nisPatInfo cancel');
@@ -83,10 +88,6 @@ async function cancelThenFetchNisPatInfoContent() {
     }
   });
 }
-
-//#endregion
-
-//#region apiUtil
 
 const userRst = ref(new ApiResult<Users[]>());
 const userRstUser = computed(() => userRst.value.Data?.[0] ?? new Users());
@@ -149,18 +150,17 @@ async function fetchUserContent2() {
   <div>
     <h2 id="useFetch"><a href="#useFetch">useFetch</a></h2>
     <button @click="useFetchExecute">useFetchExecute</button>
-    <button @click="useFetchAbort">useFetchAbort</button>
-    {{ fetchData }}
-    <br />
+    <button @click="useFetchAbort">useFetchAbort</button><br />
+    {{ fetchData }}<br />
 
+    <h2 id="apiUtil"><a href="#apiUtil">apiUtil</a></h2>
     <button @click="cancelThenFetchNisPatInfoContent">
       cancelThenFetchNisPatInfoContent</button
     ><br />
     {{ `nisPatInfoConten.loading: ${nisPatInfoContent.loading}` }}<br />
     {{ `nisPatInfoContent.rst:` }}
-    {{ nisPatInfoContent.rst }}
+    {{ nisPatInfoContent.rst }}<br />
 
-    <h2 id="apiUtil"><a href="#apiUtil">apiUtil</a></h2>
     <button @click="fetchUserRst1">fetchUserRst1</button>
     <button @click="fetchUserRst2">fetchUserRst2</button><br />
     {{ 'userRst.Code:' + userRst.Code }} <br />

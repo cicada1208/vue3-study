@@ -24,7 +24,10 @@ function setComApiError(error: AxiosError) {
 function setNdbApiError(error: AxiosError): ApiResult {
   return (
     (error.response?.data as ApiResult) ||
-    new ApiResult({ Msg: error.message || error.name })
+    new ApiResult({
+      Code: error.response?.status,
+      Msg: error.message || error.name
+    })
   );
 }
 

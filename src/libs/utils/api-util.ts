@@ -75,6 +75,7 @@ export class BaseApi {
       params,
       data,
       headers,
+      cancelToken: content.cancelTokenSource?.token,
       ...restAxiosRequestConfig
     })
       .then(response => (content.rst = response.data))

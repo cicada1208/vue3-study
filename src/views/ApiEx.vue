@@ -7,17 +7,14 @@ import { until, useFetch } from '@vueuse/core';
 import { computed, ref, watch } from 'vue';
 import { ndbApi } from '@/services';
 import ndbRoutes from '@/services/ndb-routes';
-import type { CancelTokenSource } from 'axios';
-import axios from 'axios';
 
 //#region useFetch
 
 // https://httpbin.org/get
 // https://itunes.apple.com/search?term=twice&limit=1
+// https://hub.dummyapis.com/delay?seconds=60
 // https://webf00.cych.org.tw/NursingDashboardApi/NisPatInfo/1?clinicalUnitId=SI
-const url = ref(
-  'https://webf00.cych.org.tw/NursingDashboardApi/NisPatInfo/1?clinicalUnitId=SI'
-);
+const url = ref('https://hub.dummyapis.com/delay?seconds=60');
 
 const {
   data: fetchData,
@@ -77,16 +74,13 @@ watch(fetchAborted, () => {
 });
 
 const nisPatInfoContent = ref(new ApiContent<ApiResult<NisPatInfo[]>>());
-let nisPatInfoCancel: CancelTokenSource = null;
-async function fetchNisPatInfoContent() {
-  nisPatInfoCancel?.cancel('nisPatInfo cancel');
-  nisPatInfoCancel = axios.CancelToken.source();
+async function cancelThenFetchNisPatInfoContent() {
+  nisPatInfoContent.value.cancel('nisPatInfo cancel');
 
   ndbApi.get(nisPatInfoContent.value, ndbRoutes.NisPatInfo.GetNisPatInfo + 1, {
     params: {
       clinicalUnitId: 'SI'
-    },
-    cancelToken: nisPatInfoCancel.token
+    }
   });
 }
 
@@ -159,11 +153,12 @@ async function fetchUserContent2() {
     {{ fetchData }}
     <br />
 
-    <button @click="fetchNisPatInfoContent">fetchNisPatInfoContent</button
+    <button @click="cancelThenFetchNisPatInfoContent">
+      cancelThenFetchNisPatInfoContent</button
     ><br />
     {{ `nisPatInfoConten.loading: ${nisPatInfoContent.loading}` }}<br />
-    {{ `nisPatInfoContent.rst.Data:` }}
-    {{ nisPatInfoContent.rst.Data }}
+    {{ `nisPatInfoContent.rst:` }}
+    {{ nisPatInfoContent.rst }}
 
     <h2 id="apiUtil"><a href="#apiUtil">apiUtil</a></h2>
     <button @click="fetchUserRst1">fetchUserRst1</button>

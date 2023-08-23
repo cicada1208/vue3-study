@@ -89,10 +89,10 @@ export class BaseApi {
         } else {
           content.err = true;
           content.rst = this.setApiError(error);
-          // 若 TRst 非 ApiResult 型別，且 setApiError 回傳非 ApiResult 型別(例如 string)，
+          // 若 TRst 非 Model 型別，且 setApiError 回傳非 Model 型別(例如 string)，
           // 可透過 content.err 判斷 content.rst 為錯誤訊息，
           // 且此時 typeof content.rst 可為 'string'。
-          // 若 TRst 為 ApiResult 型別，代表後端已統一回傳格式，直接判斷 ApiResult.Succ。
+          // 若 TRst 為 ApiResult 型別，代表後端已統一回傳格式，可直接判斷 ApiResult.Succ。
           console.error('baseApi.method error:', content.rst);
         }
       })

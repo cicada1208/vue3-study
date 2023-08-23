@@ -11,8 +11,8 @@ import ndbRoutes from '@/services/ndb-routes';
 //#region useFetch
 
 // http://httpstat.us/500
-// https://hub.dummyapis.com/delay?seconds=60
 // https://httpbin.org/get
+// https://hub.dummyapis.com/delay?seconds=60
 // https://itunes.apple.com/search?term=twice&limit=1
 // https://webf00.cych.org.tw/NursingDashboardApi/NisPatInfo/1?clinicalUnitId=SI
 const url = ref('https://hub.dummyapis.com/delay?seconds=5');

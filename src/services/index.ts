@@ -31,10 +31,10 @@ function setNdbApiError(error: AxiosError): ApiResult {
   );
 }
 
-// /** comApi response no specific json */
+// /** comApi response no specific model when error */
 // const comApi = new BaseApi('', setComApiError);
 
-/** ndbApi response specific json */
+/** ndbApi response ApiResult */
 const ndbApi = new BaseApi(apiUrl.ndb, setNdbApiError);
 ndbApi.axios.interceptors.request.use(
   config => {
@@ -95,7 +95,7 @@ ndbApi.axios.interceptors.response.use(
   }
 );
 
-/** hrApi response no specific json */
+/** hrApi response no specific model when error */
 const hrApi = new BaseApi(apiUrl.hr, setComApiError);
 hrApi.axios.interceptors.response.use(
   response => {

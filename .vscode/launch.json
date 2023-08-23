@@ -17,14 +17,14 @@
       // that write directly to the stdout/stderr streams instead of using
       // console.* APIs.
       "outputCapture": "std",
-      "skipFiles": ["<node_internals>/**", "node_modules/**/*.js"]
+      "skipFiles": ["<node_internals>/**", "**/node_modules/**"]
     },
     {
       "type": "chrome",
       "request": "launch",
       "name": "chrome:file",
       "file": "${file}",
-      "skipFiles": ["<node_internals>/**", "node_modules/**/*.js"]
+      "skipFiles": ["<node_internals>/**", "**/node_modules/**"]
     },
     {
       "type": "chrome",
@@ -39,7 +39,7 @@
         "webpack:///./src/*.js": "${webRoot}/*.js"
       },
       "preLaunchTask": "vue2:serve",
-      "skipFiles": ["<node_internals>/**", "node_modules/**/*.js", "runtime.js"]
+      "skipFiles": ["<node_internals>/**", "**/node_modules/**", "runtime.js"]
     },
     {
       "type": "chrome",
@@ -57,7 +57,7 @@
       "preLaunchTask": "vue2:serve",
       "skipFiles": [
         "<node_internals>/**",
-        "node_modules/**/*.js",
+        "**/node_modules/**",
         "runtime.js",
         "**/webpack:/**"
       ]
@@ -69,7 +69,7 @@
       "url": "http://localhost:8080",
       "webRoot": "${workspaceFolder}/src",
       "preLaunchTask": "vue3:dev",
-      "skipFiles": ["<node_internals>/**", "node_modules/**/*.js", "runtime.js"]
+      "skipFiles": ["<node_internals>/**"]
     }
   ]
 }

@@ -6,6 +6,7 @@ import { BaseApi } from '@/libs/utils/api-util';
 import type { AxiosError } from 'axios';
 import { apiUrls } from './api-urls';
 import type { IApiUrl, AppRun } from './api-urls';
+import { createFetch } from '@vueuse/core';
 
 const apiUrl: IApiUrl = apiUrls[import.meta.env.VITE_APP_RUN as AppRun];
 
@@ -121,4 +122,22 @@ hrApi.axios.interceptors.response.use(
   }
 );
 
-export { ndbApi, hrApi };
+const useFetchNdb = createFetch({
+  baseUrl: apiUrl.ndb,
+  options: {
+    // async beforeFetch({ options }) {
+    //   const myToken = await getMyToken();
+    //   options.headers.Authorization = `Bearer ${myToken}`;
+    //   return { options };
+    // }
+    onFetchError(ctx) {
+      // ctx.data can be null when 5xx response
+      // if (ctx.data === null) ctx.data = 'test data'; // Modifies the response data
+      ctx.data = 'test data';
+      ctx.error = 'test error'; // Modifies the error
+      return ctx;
+    }
+  }
+});
+
+export { ndbApi, hrApi, useFetchNdb };

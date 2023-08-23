@@ -5,7 +5,7 @@ import Users from '@/models/users';
 import type NisPatInfo from '@/models/nis-pat-info';
 import { until, useFetch } from '@vueuse/core';
 import { computed, ref, watch } from 'vue';
-import { ndbApi } from '@/services';
+import { ndbApi, useFetchNdb } from '@/services';
 import ndbRoutes from '@/services/ndb-routes';
 
 //#region useFetch
@@ -15,7 +15,7 @@ import ndbRoutes from '@/services/ndb-routes';
 // https://hub.dummyapis.com/delay?seconds=60
 // https://itunes.apple.com/search?term=twice&limit=1
 // https://webf00.cych.org.tw/NursingDashboardApi/NisPatInfo/1?clinicalUnitId=SI
-const url = ref('https://hub.dummyapis.com/delay?seconds=5');
+const url = ref('https://hub.dummyapis.com/delay?seconds=3');
 
 const {
   data: fetchData,
@@ -94,6 +94,9 @@ watch(fetchAborted, () => {
     fetchAborted.value
   );
 });
+
+const ndbUrl = ref('http://httpstat.us/500');
+const { data: ndbData, error: ndbError } = useFetchNdb(ndbUrl).get().text();
 //#endregion
 
 //#region apiUtil
@@ -168,10 +171,14 @@ async function fetchUserContent2() {
 
 <template>
   <div>
+    ndbData: {{ ndbData }}<br />
+    ndbError: {{ ndbError }}<br />
+
     <h2 id="useFetch"><a href="#useFetch">useFetch</a></h2>
     <button @click="useFetchExecute">useFetchExecute</button>
     <button @click="useFetchAbort">useFetchAbort</button><br />
-    {{ fetchData }}<br />
+    fetchData: {{ fetchData }}<br />
+    fetchError: {{ fetchError }}<br />
 
     <h2 id="apiUtil"><a href="#apiUtil">apiUtil</a></h2>
     <button @click="cancelThenFetchNisPatInfoContent">

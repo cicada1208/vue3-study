@@ -15,8 +15,8 @@ import ndbRoutes from '@/services/ndb-routes';
 // https://hub.dummyapis.com/delay?seconds=60
 // https://itunes.apple.com/search?term=twice&limit=1
 // https://webf00.cych.org.tw/NursingDashboardApi/NisPatInfo/1?clinicalUnitId=SI
-const url = ref('https://hub.dummyapis.com/delay?seconds=3');
 
+const url = ref('https://hub.dummyapis.com/delay?seconds=3');
 const {
   data: fetchData,
   error: fetchError,
@@ -171,10 +171,10 @@ async function fetchUserContent2() {
 
 <template>
   <div>
+    <h2 id="useFetch"><a href="#useFetch">useFetch</a></h2>
     ndbData: {{ ndbData }}<br />
     ndbError: {{ ndbError }}<br />
 
-    <h2 id="useFetch"><a href="#useFetch">useFetch</a></h2>
     <button @click="useFetchExecute">useFetchExecute</button>
     <button @click="useFetchAbort">useFetchAbort</button><br />
     fetchData: {{ fetchData }}<br />
@@ -185,7 +185,7 @@ async function fetchUserContent2() {
       cancelThenFetchNisPatInfoContent</button
     ><br />
     {{ `nisPatInfoConten.loading: ${nisPatInfoContent.loading}` }}<br />
-    {{ `nisPatInfoContent.rst:` }}
+    nisPatInfoContent.rst:
     {{ nisPatInfoContent.rst }}<br />
 
     <button @click="fetchUserRst1">fetchUserRst1</button>
@@ -194,6 +194,7 @@ async function fetchUserContent2() {
     {{ 'userRst.Succ:' + userRst.Succ }} <br />
     {{ 'userRst.Msg:' + userRst.Msg }} <br />
     {{ 'userRstUser.userName:' + userRstUser.userName }} <br />
+
     <button @click="fetchUserContent1">fetchUserContent1</button>
     <button @click="fetchUserContent2">fetchUserContent2</button><br />
     {{ 'userContent.loading:' + userContent.loading }} <br />

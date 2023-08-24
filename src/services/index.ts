@@ -6,7 +6,7 @@ import { BaseApi } from '@/libs/utils/api-util';
 import type { AxiosError } from 'axios';
 import { apiUrls } from './api-urls';
 import type { IApiUrl, AppRun } from './api-urls';
-import { createFetch } from '@vueuse/core';
+import { createFetch } from '@/libs/vueuse/useFetch';
 
 const apiUrl: IApiUrl = apiUrls[import.meta.env.VITE_APP_RUN as AppRun];
 
@@ -131,10 +131,7 @@ const useFetchNdb = createFetch({
     //   return { options };
     // }
     onFetchError(ctx) {
-      // ctx.data can be null when 5xx response
-      // if (ctx.data === null) ctx.data = 'test data'; // Modifies the response data
-      ctx.data = 'test data';
-      ctx.error = 'test error'; // Modifies the error
+      ctx.error = ctx.data || ctx.error?.message || ctx.error?.name;
       return ctx;
     }
   }

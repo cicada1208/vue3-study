@@ -8,13 +8,24 @@ import { computed, ref, watch } from 'vue';
 import { ndbApi, useFetchNdb } from '@/services';
 import ndbRoutes from '@/services/ndb-routes';
 
-//#region useFetch
+//#region public api
 
-// http://httpstat.us/500
+// method:
 // https://httpbin.org/get
-// https://hub.dummyapis.com/delay?seconds=60
+// status code:
+// http://httpbin.org/status/500
+// http://httpstat.us/500
+// delay:
+// https://httpbin.org/delay/10 // max 10 sec
+// https://httpstat.us/200?sleep=300000 // max 5 min, unit is ms
+// https://hub.dummyapis.com/delay?seconds=60 // max 60 sec
+// json data:
 // https://itunes.apple.com/search?term=twice&limit=1
 // https://webf00.cych.org.tw/NursingDashboardApi/NisPatInfo/1?clinicalUnitId=SI
+
+//#endregion
+
+//#region useFetch
 
 // 解 execute 連續執行目前有 bug
 // url query string
@@ -31,7 +42,7 @@ const {
   .get()
   .json();
 
-const url = ref('https://hub.dummyapis.com/delay?seconds=3');
+const fetchUrl = ref('https://hub.dummyapis.com/delay?seconds=3');
 const {
   data: fetchData,
   error: fetchError,
@@ -41,7 +52,7 @@ const {
   aborted: fetchAborted,
   canAbort: fetchCanAbort,
   abort: fetchAbort
-} = useFetch(url, {
+} = useFetch(fetchUrl, {
   immediate: false
 })
   .get()

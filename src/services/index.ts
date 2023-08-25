@@ -131,7 +131,14 @@ const useFetchNdb = createFetch({
     //   return { options };
     // }
     onFetchError(ctx) {
-      ctx.error = ctx.data || ctx.error?.message || ctx.error?.name;
+      ctx.data =
+        ctx.data ||
+        new ApiResult({
+          Code: ctx.response?.status,
+          Msg: ctx.error?.message || ctx.error?.name
+        });
+
+      ctx.error = ctx.data;
       return ctx;
     }
   }

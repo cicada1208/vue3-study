@@ -16,6 +16,21 @@ import ndbRoutes from '@/services/ndb-routes';
 // https://itunes.apple.com/search?term=twice&limit=1
 // https://webf00.cych.org.tw/NursingDashboardApi/NisPatInfo/1?clinicalUnitId=SI
 
+// 解 execute 連續執行目前有 bug
+// url query string
+const ndbUrl = ref(
+  ndbRoutes.NisPatInfo.GetNisPatInfo + 1 + '?clinicalUnitId=SI'
+);
+const {
+  data: ndbData,
+  error: ndbError,
+  execute: ndbExecute
+} = useFetchNdb(ndbUrl, {
+  immediate: false
+})
+  .get()
+  .json();
+
 const url = ref('https://hub.dummyapis.com/delay?seconds=3');
 const {
   data: fetchData,
@@ -95,8 +110,6 @@ watch(fetchAborted, () => {
   );
 });
 
-const ndbUrl = ref('http://httpstat.us/500');
-const { data: ndbData, error: ndbError } = useFetchNdb(ndbUrl).get().text();
 //#endregion
 
 //#region apiUtil
@@ -172,6 +185,7 @@ async function fetchUserContent2() {
 <template>
   <div>
     <h2 id="useFetch"><a href="#useFetch">useFetch</a></h2>
+    <button @click="ndbExecute()">ndbExecute</button><br />
     ndbData: {{ ndbData }}<br />
     ndbError: {{ ndbError }}<br />
 

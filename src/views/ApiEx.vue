@@ -60,8 +60,6 @@ const {
   .text();
 
 async function useFetchExecute() {
-  // execute 連續執行目前有 bug: isFetching 狀態不正確，且最後 data、error 都有資料
-
   // the 1st way of get fetchData.value
   await fetchExecute();
 

@@ -28,7 +28,6 @@ import ndbRoutes from '@/services/ndb-routes';
 
 //#region useFetch
 
-// shallowRef or ref
 // url query string
 const ndbUrl = ref(
   ndbRoutes.NisPatInfo.GetNisPatInfo + 1 + '?clinicalUnitId=SI'
@@ -38,13 +37,11 @@ const {
   error: ndbError,
   execute: ndbExecute
 } = useFetchNdb(ndbUrl, {
-  immediate: false
+  immediate: false,
+  shallow: false
 })
   .get()
   .json<ApiResult<NisPatInfo[]>>();
-function modifyNdbData() {
-  ndbData.value.Msg = 'test';
-}
 
 const fetchUrl = ref('https://hub.dummyapis.com/delay?seconds=5');
 const {
@@ -199,10 +196,8 @@ async function fetchUserContent2() {
   <div>
     <h2 id="useFetch"><a href="#useFetch">useFetch</a></h2>
     <button @click="ndbExecute()">ndbExecute</button><br />
-    <button @click="modifyNdbData">modifyNdbData</button><br />
     ndbData: {{ ndbData }}<br />
     ndbError: {{ ndbError }}<br />
-    ndbData.value.Msg: {{ ndbData?.Msg }} <br />
 
     <button @click="useFetchExecute">useFetchExecute</button>
     <button @click="useFetchAbort">useFetchAbort</button><br />

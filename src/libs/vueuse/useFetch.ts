@@ -228,6 +228,13 @@ export interface UseFetchOptions {
     response: Response | null;
     error: any;
   }) => Promise<Partial<OnFetchErrorContext>> | Partial<OnFetchErrorContext>;
+
+  /**
+   * Use shallowRef.
+   *
+   * @default true
+   */
+  shallow?: boolean;
 }
 
 export interface CreateFetchOptions {
@@ -271,7 +278,8 @@ function isFetchOptions(obj: object): obj is UseFetchOptions {
       'beforeFetch',
       'afterFetch',
       'onFetchError',
-      'fetch'
+      'fetch',
+      'shallow'
     )
   );
 }
@@ -417,7 +425,8 @@ export function useFetch<T>(
   let options: UseFetchOptions = {
     immediate: true,
     refetch: false,
-    timeout: 0
+    timeout: 0,
+    shallow: true
   };
   interface InternalConfig {
     method: HttpMethod;
@@ -453,7 +462,11 @@ export function useFetch<T>(
   const statusCode = ref<number | null>(null);
   const response = shallowRef<Response | null>(null);
   const error = shallowRef<any>(null);
-  const data = shallowRef<T | null>(initialData || null);
+  // setting shallowRef or ref data
+  // const data = shallowRef<T | null>(initialData || null);
+  const data = (options.shallow ? shallowRef : ref)<T | null>(
+    initialData || null
+  ) as Ref<T | null>;
 
   const canAbort = computed(() => supportsAbort && isFetching.value);
 

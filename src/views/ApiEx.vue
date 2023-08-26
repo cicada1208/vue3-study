@@ -3,10 +3,11 @@ import ApiContent from '@/libs/models/api-content';
 import ApiResult from '@/libs/models/api-result';
 import Users from '@/models/users';
 import type NisPatInfo from '@/models/nis-pat-info';
-import { until } from '@vueuse/core';
+import type { INisPatInfo } from '@/models/nis-pat-info';
 import { computed, ref, watch } from 'vue';
-import { ndbApi, useFetchNdb } from '@/services';
+import { until } from '@vueuse/core';
 import { useFetch } from '@/libs/vueuse/useFetch';
+import { ndbApi, useFetchNdb } from '@/services';
 import ndbRoutes from '@/services/ndb-routes';
 
 //#region public api
@@ -29,8 +30,12 @@ import ndbRoutes from '@/services/ndb-routes';
 //#region useFetch
 
 // url query string
-const ndbUrl = ref(
-  ndbRoutes.NisPatInfo.GetNisPatInfo + 1 + '?clinicalUnitId=SI'
+const ndbUrlParams = ref<INisPatInfo>({ clinicalUnitId: 'SI' });
+const ndbUrl = computed(
+  () =>
+    `${ndbRoutes.NisPatInfo.GetNisPatInfo}1?${new URLSearchParams(
+      ndbUrlParams.value as any
+    ).toString()}`
 );
 const {
   data: ndbData,
@@ -38,7 +43,8 @@ const {
   execute: ndbExecute
 } = useFetchNdb(ndbUrl, {
   immediate: false,
-  shallow: false
+  shallow: false,
+  initialData: new ApiResult<NisPatInfo[]>({ Data: [] })
 })
   .get()
   .json<ApiResult<NisPatInfo[]>>();

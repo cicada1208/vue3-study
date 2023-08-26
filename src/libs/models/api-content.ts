@@ -8,7 +8,7 @@ export interface IApiContent<TRst = unknown> {
   cancelTokenSource?: CancelTokenSource;
 }
 
-export default class ApiContent<TRst = unknown> implements IApiContent<TRst> {
+export class ApiContent<TRst = unknown> implements IApiContent<TRst> {
   loading: boolean;
   rst: TRst;
   err: boolean;

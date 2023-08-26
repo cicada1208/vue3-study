@@ -1,4 +1,4 @@
-import type ApiContent from '@/libs/models/api-content';
+import type { ApiContent } from '@/libs/models/api-content';
 import axios from 'axios';
 import type { AxiosInstance, AxiosRequestConfig, AxiosError } from 'axios';
 import { convertDate } from './date-util';

@@ -1,9 +1,8 @@
 <script setup lang="ts">
-import ApiContent from '@/libs/models/api-content';
-import ApiResult from '@/libs/models/api-result';
-import Users from '@/models/users';
-import type NisPatInfo from '@/models/nis-pat-info';
-import type { INisPatInfo } from '@/models/nis-pat-info';
+import { ApiContent } from '@/libs/models/api-content';
+import { ApiResult } from '@/libs/models/api-result';
+import { Users } from '@/models/users';
+import type { INisPatInfo, NisPatInfo } from '@/models/nis-pat-info';
 import { computed, ref, watch } from 'vue';
 import { until } from '@vueuse/core';
 import { useFetch } from '@/libs/vueuse/useFetch';
@@ -44,10 +43,15 @@ const {
 } = useFetchNdb(ndbUrl, {
   immediate: false,
   shallow: false,
+  refetch: true,
   initialData: new ApiResult<NisPatInfo[]>({ Data: [] })
 })
   .get()
   .json<ApiResult<NisPatInfo[]>>();
+
+function modifyNdbUrlParams() {
+  ndbUrlParams.value.clinicalUnitId = '9D';
+}
 
 const fetchUrl = ref('https://hub.dummyapis.com/delay?seconds=5');
 const {
@@ -202,6 +206,7 @@ async function fetchUserContent2() {
   <div>
     <h2 id="useFetch"><a href="#useFetch">useFetch</a></h2>
     <button @click="ndbExecute()">ndbExecute</button><br />
+    <button @click="modifyNdbUrlParams">modifyNdbUrlParams</button><br />
     ndbData: {{ ndbData }}<br />
     ndbError: {{ ndbError }}<br />
 

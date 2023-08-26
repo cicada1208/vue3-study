@@ -1,5 +1,5 @@
-import type Allergy from './allergy';
-import type Ch_dnr from './ch-dnr';
+import type { Allergy } from './allergy';
+import type { Ch_dnr } from './ch-dnr';
 
 export interface INisPatInfo {
   ptEncounterId?: string;
@@ -71,7 +71,7 @@ export interface INisPatInfo {
   AP2?: string;
 }
 
-export default class NisPatInfo implements INisPatInfo {
+export class NisPatInfo implements INisPatInfo {
   ptEncounterId: string;
   hisIpdNo: string;
   BeginDt: string;

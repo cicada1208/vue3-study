@@ -12,7 +12,7 @@ export interface IAllergy {
   AllergyTypeName?: string;
 }
 
-export default class Allergy implements IAllergy {
+export class Allergy implements IAllergy {
   ptEncounterID: string;
   PT_NO: string;
   AllergyType: string;

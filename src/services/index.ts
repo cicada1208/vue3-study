@@ -1,4 +1,4 @@
-import ApiResult from '@/libs/models/api-result';
+import { ApiResult } from '@/libs/models/api-result';
 import { BaseApi } from '@/libs/utils/api-util';
 // import store from '@/store';
 // import Msg from '@/models/msg';

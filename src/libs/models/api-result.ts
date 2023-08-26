@@ -8,7 +8,7 @@ export interface IApiResult<TData = unknown> {
   RowsAffected?: number;
 }
 
-export default class ApiResult<TData = unknown> implements IApiResult<TData> {
+export class ApiResult<TData = unknown> implements IApiResult<TData> {
   Succ: boolean;
   Code: number;
   Msg: string;

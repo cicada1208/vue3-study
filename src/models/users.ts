@@ -20,7 +20,7 @@ export interface IUsers {
   loggedIn?: boolean;
 }
 
-export default class Users implements IUsers {
+export class Users implements IUsers {
   userId: string;
   loginId: string;
   userName: string;

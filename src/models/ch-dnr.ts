@@ -19,7 +19,7 @@ export interface ICh_dnr {
   dnr_chk_item?: Array<string>;
 }
 
-export default class Ch_dnr implements ICh_dnr {
+export class Ch_dnr implements ICh_dnr {
   dnr_pat_idno: string;
   dnr_tbl_type: string;
   dnr_pat_no: number;

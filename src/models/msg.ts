@@ -10,7 +10,7 @@ export interface IMsg {
   bottom?: boolean;
 }
 
-export default class Msg implements IMsg {
+export class Msg implements IMsg {
   show: boolean;
   type: MsgType;
   msg: string;

@@ -548,7 +548,7 @@ export function useFetch<T>(
 
     timer?.start();
 
-    // 修正連續執行 execute()，因 abort() 當中的 AbortController 實際為非同步，
+    // 修正連續執行 execute() 時，因 abort() 當中的 AbortController 實際為非同步，
     // 導致 isFetching、isFinished、aborted 狀態不正確。
     executeCounter += 1;
     const currentExecuteCounter = executeCounter;
@@ -568,44 +568,46 @@ export function useFetch<T>(
           responseData = await fetchResponse[config.type]();
 
           // see: https://www.tjvantoll.com/2015/09/13/fetch-and-errors/
-          if (!fetchResponse.ok) {
-            data.value = initialData || null;
-            throw new Error(fetchResponse.statusText);
-          }
+          if (!fetchResponse.ok) throw new Error(fetchResponse.statusText);
 
           if (options.afterFetch)
             ({ data: responseData } = await options.afterFetch({
               data: responseData,
               response: fetchResponse
             }));
+
           data.value = responseData;
           error.value = null; // 若殘留上次的值易生混淆
-
           responseEvent.trigger(fetchResponse);
+
           return resolve(fetchResponse);
         })
         .catch(async fetchError => {
-          // 以後端的 error response data 為主
-          let errorData = responseData || fetchError.message || fetchError.name;
+          // 取消不當作錯誤，data、error 保留上次的值，同 beforeFetch 中執行 cancel()
+          if (fetchError.name === 'AbortError')
+            console.log('Abort:', fetchError.message || fetchError.name);
+          else {
+            // 以後端的 error response data 為主
+            let errorData =
+              responseData || fetchError.message || fetchError.name;
 
-          if (options.onFetchError) {
-            ({ data: responseData, error: errorData } =
-              await options.onFetchError({
-                data: responseData,
-                error: fetchError,
-                response: response.value
-              }));
-            // 若有設定 onFetchError，以 responseData 為主
-            data.value = responseData || initialData || null;
-          } else {
-            // catch error 時應同 !fetchResponse.ok 予以 data.value = initialData || null，否則殘留上次 request 的值易生混淆
-            data.value = initialData || null;
+            if (options.onFetchError) {
+              ({ data: responseData, error: errorData } =
+                await options.onFetchError({
+                  data: responseData,
+                  error: fetchError,
+                  response: response.value
+                }));
+
+              // 若有設定 onFetchError，以 responseData 為主
+              data.value = responseData || initialData || null;
+            } else data.value = initialData || null; // 若殘留上次的值易生混淆
+
+            error.value = errorData;
+            errorEvent.trigger(fetchError);
           }
-          error.value = errorData;
 
-          errorEvent.trigger(fetchError);
           if (throwOnFailed) return reject(fetchError);
-
           return resolve(null);
         })
         .finally(() => {

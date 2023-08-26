@@ -41,7 +41,10 @@ const {
   immediate: false
 })
   .get()
-  .json();
+  .json<ApiResult<NisPatInfo[]>>();
+function modifyNdbData() {
+  ndbData.value.Msg = 'test';
+}
 
 const fetchUrl = ref('https://hub.dummyapis.com/delay?seconds=5');
 const {
@@ -196,8 +199,10 @@ async function fetchUserContent2() {
   <div>
     <h2 id="useFetch"><a href="#useFetch">useFetch</a></h2>
     <button @click="ndbExecute()">ndbExecute</button><br />
+    <button @click="modifyNdbData">modifyNdbData</button><br />
     ndbData: {{ ndbData }}<br />
     ndbError: {{ ndbError }}<br />
+    ndbData.value.Msg: {{ ndbData?.Msg }} <br />
 
     <button @click="useFetchExecute">useFetchExecute</button>
     <button @click="useFetchAbort">useFetchAbort</button><br />

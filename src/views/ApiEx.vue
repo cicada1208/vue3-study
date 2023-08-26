@@ -3,9 +3,10 @@ import ApiContent from '@/libs/models/api-content';
 import ApiResult from '@/libs/models/api-result';
 import Users from '@/models/users';
 import type NisPatInfo from '@/models/nis-pat-info';
-import { until, useFetch } from '@vueuse/core';
+import { until } from '@vueuse/core';
 import { computed, ref, watch } from 'vue';
 import { ndbApi, useFetchNdb } from '@/services';
+import { useFetch } from '@/libs/vueuse/useFetch';
 import ndbRoutes from '@/services/ndb-routes';
 
 //#region public api

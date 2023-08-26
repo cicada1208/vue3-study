@@ -460,11 +460,20 @@ export function useFetch<T>(
   let controller: AbortController | undefined;
   let timer: Stoppable | undefined;
 
+  const loading = (isLoading: boolean) => {
+    isFetching.value = isLoading;
+    isFinished.value = !isLoading;
+  };
+
   const abort = () => {
     if (supportsAbort) {
       controller?.abort();
       controller = new AbortController();
-      controller.signal.onabort = () => (aborted.value = true);
+      controller.signal.onabort = () => {
+        aborted.value = true;
+        loading(false);
+      };
+
       fetchOptions = {
         ...fetchOptions,
         signal: controller.signal
@@ -472,13 +481,9 @@ export function useFetch<T>(
     }
   };
 
-  const loading = (isLoading: boolean) => {
-    isFetching.value = isLoading;
-    isFinished.value = !isLoading;
-  };
-
   if (timeout) timer = useTimeoutFn(abort, timeout, { immediate: false });
 
+  let executeCounter = 0;
   const execute = async (throwOnFailed = false) => {
     abort();
 
@@ -534,14 +539,22 @@ export function useFetch<T>(
       Object.assign(context, await options.beforeFetch(context));
 
     if (isCanceled || !fetch) {
+      aborted.value = true;
       loading(false);
       return Promise.resolve(null);
     }
 
     let responseData: any = null;
 
-    if (timer) timer.start();
+    if (timer) {
+      timer.stop();
+      timer.start();
+    }
 
+    // 修正連續執行 execute()，因 abort() 當中的 AbortController 實際為非同步，
+    // 導致 isFetching、isFinished、aborted 狀態不正確。
+    executeCounter += 1;
+    const currentExecuteCounter = executeCounter;
     return new Promise<Response | null>((resolve, reject) => {
       fetch(context.url, {
         ...defaultFetchOptions,
@@ -569,6 +582,7 @@ export function useFetch<T>(
               response: fetchResponse
             }));
           data.value = responseData;
+          error.value = null; // 若殘留上次的值易生混淆
 
           responseEvent.trigger(fetchResponse);
           return resolve(fetchResponse);
@@ -598,8 +612,11 @@ export function useFetch<T>(
           return resolve(null);
         })
         .finally(() => {
-          loading(false);
-          if (timer) timer.stop();
+          if (currentExecuteCounter === executeCounter) {
+            loading(false);
+            if (timer) timer.stop();
+          }
+
           finallyEvent.trigger(null);
         });
     });

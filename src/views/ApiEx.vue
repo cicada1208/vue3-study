@@ -28,7 +28,7 @@ import ndbRoutes from '@/services/ndb-routes';
 
 //#region useFetch
 
-// 解 execute 連續執行目前有 bug
+// shallowRef or ref
 // url query string
 const ndbUrl = ref(
   ndbRoutes.NisPatInfo.GetNisPatInfo + 1 + '?clinicalUnitId=SI'
@@ -43,7 +43,7 @@ const {
   .get()
   .json();
 
-const fetchUrl = ref('https://hub.dummyapis.com/delay?seconds=3');
+const fetchUrl = ref('https://hub.dummyapis.com/delay?seconds=5');
 const {
   data: fetchData,
   error: fetchError,

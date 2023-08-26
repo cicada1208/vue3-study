@@ -546,10 +546,7 @@ export function useFetch<T>(
 
     let responseData: any = null;
 
-    if (timer) {
-      timer.stop();
-      timer.start();
-    }
+    timer?.start();
 
     // 修正連續執行 execute()，因 abort() 當中的 AbortController 實際為非同步，
     // 導致 isFetching、isFinished、aborted 狀態不正確。
@@ -614,7 +611,7 @@ export function useFetch<T>(
         .finally(() => {
           if (currentExecuteCounter === executeCounter) {
             loading(false);
-            if (timer) timer.stop();
+            timer?.stop();
           }
 
           finallyEvent.trigger(null);

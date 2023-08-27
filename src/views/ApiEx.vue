@@ -40,13 +40,13 @@ const {
   data: ndbData,
   error: ndbError,
   execute: ndbExecute
-} = useFetchNdb(ndbUrl, {
+} = useFetchNdb<ApiResult<NisPatInfo[]>>(ndbUrl, {
   immediate: false,
   shallow: false,
   initialData: new ApiResult<NisPatInfo[]>({ Data: [] })
 })
   .get()
-  .json<ApiResult<NisPatInfo[]>>();
+  .json();
 
 function modifyNdbUrlParams() {
   ndbUrlParams.value.clinicalUnitId = '9D';

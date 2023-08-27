@@ -111,7 +111,7 @@ export interface UseFetchReturn<T> {
   ): UseFetchReturn<T> & PromiseLike<UseFetchReturn<T>>;
 
   // type
-  json<JSON = any>(): UseFetchReturn<JSON> & PromiseLike<UseFetchReturn<JSON>>;
+  json<JSON = T>(): UseFetchReturn<JSON> & PromiseLike<UseFetchReturn<JSON>>;
   text(): UseFetchReturn<string> & PromiseLike<UseFetchReturn<string>>;
   blob(): UseFetchReturn<Blob> & PromiseLike<UseFetchReturn<Blob>>;
   arrayBuffer(): UseFetchReturn<ArrayBuffer> &

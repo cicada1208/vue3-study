@@ -35,11 +35,11 @@ const stateStorage = useStorage('vue-use-local-storage', defaultStorage);
     {{ `x = ${x}, y = ${y}` }}
 
     <h2 id="useTitle"><a href="#useTitle">useTitle</a></h2>
-    {{ title }}
     <button @click="changeTitle">changeTitle</button>
+    {{ title }}
 
     <h2 id="onClickOutside"><a href="#onClickOutside">onClickOutside</a></h2>
-    <button @click="showModal = true">Open modal</button>
+    <button @click="showModal = true">showModal</button>
     <div
       v-if="showModal"
       v-on-click-outside="closeModal"

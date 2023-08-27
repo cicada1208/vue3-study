@@ -2,7 +2,7 @@
 import { ApiContent } from '@/libs/models/api-content';
 import { ApiResult } from '@/libs/models/api-result';
 import { Users } from '@/models/users';
-import type { INisPatInfo, NisPatInfo } from '@/models/nis-pat-info';
+import type { NisPatInfo, INisPatInfo } from '@/models/nis-pat-info';
 import { computed, ref, watch } from 'vue';
 import { until } from '@vueuse/core';
 import { useFetch } from '@/libs/vueuse/useFetch';
@@ -28,7 +28,6 @@ import ndbRoutes from '@/services/ndb-routes';
 
 //#region useFetch
 
-// url query string
 const ndbUrlParams = ref<INisPatInfo>({ clinicalUnitId: 'SI' });
 const ndbUrl = computed(
   () =>
@@ -36,6 +35,7 @@ const ndbUrl = computed(
       ndbUrlParams.value as any
     ).toString()}`
 );
+
 const {
   data: ndbData,
   error: ndbError,
@@ -43,7 +43,6 @@ const {
 } = useFetchNdb(ndbUrl, {
   immediate: false,
   shallow: false,
-  refetch: true,
   initialData: new ApiResult<NisPatInfo[]>({ Data: [] })
 })
   .get()
@@ -205,7 +204,7 @@ async function fetchUserContent2() {
 <template>
   <div>
     <h2 id="useFetch"><a href="#useFetch">useFetch</a></h2>
-    <button @click="ndbExecute()">ndbExecute</button><br />
+    <button @click="ndbExecute()">ndbExecute</button>
     <button @click="modifyNdbUrlParams">modifyNdbUrlParams</button><br />
     ndbData: {{ ndbData }}<br />
     ndbError: {{ ndbError }}<br />

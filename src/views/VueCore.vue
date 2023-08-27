@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useDebouncedRef } from '@/libs/vueuse/useDebouncedRef';
+import { useDebounceRef } from '@/libs/vueuse/useDebounceRef';
 import { reactive, ref, computed, watch, shallowRef, type Ref } from 'vue';
 
 // 创建响应式对象或数组
@@ -34,7 +34,7 @@ watch(refState, newState => console.log(newState), { deep: true });
 const numbers = reactive([1, 2, 3, 4, 5]);
 const reverseNumbers = computed(() => [...numbers].reverse());
 
-const debouncedText = useDebouncedRef('hello', 1000);
+const debouncedText = useDebounceRef('hello', 1000);
 
 const theme = reactive({
   color: 'red'
@@ -76,7 +76,7 @@ function asignTitlePropertyOfDeep() {
       <li v-for="num in reverseNumbers" :key="num">{{ num }}</li>
     </ul>
 
-    <h2 id="useDebouncedRef"><a href="#useDebouncedRef">useDebouncedRef</a></h2>
+    <h2 id="useDebounceRef"><a href="#useDebounceRef">useDebounceRef</a></h2>
     <p>This debouncedText only updates 1 second after you've stopped typing:</p>
     <p>{{ debouncedText }}</p>
     <input v-model="debouncedText" />

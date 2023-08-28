@@ -79,10 +79,14 @@ const stodRef: Ref<IStoD> = ref(reactive(stodShallowRef));
 
 function asignValueOfShallowRef() {
   stodShallowRef.value = { title: 'asign value of shallowRef' };
+  console.log('stodShallowRef:', stodShallowRef);
+  console.log('stodRef:', stodRef);
 }
 
 function asignTitlePropertyOfDeep() {
   stodRef.value.title = 'asign title property of deep';
+  console.log('stodShallowRef:', stodShallowRef);
+  console.log('stodRef:', stodRef);
 }
 
 //#endregion

@@ -615,8 +615,16 @@ export function useFetch<T>(
 
               // 若有設定 onFetchError，以 responseData 為主
               data.value =
-                responseData || JSON.parse(JSON.stringify(initialData)) || null;
-            } else data.value = JSON.parse(JSON.stringify(initialData)) || null; // 若殘留上次的值易生混淆
+                responseData ||
+                (initialData
+                  ? JSON.parse(JSON.stringify(initialData))
+                  : initialData) ||
+                null;
+            } else
+              data.value =
+                (initialData
+                  ? JSON.parse(JSON.stringify(initialData))
+                  : initialData) || null; // 若殘留上次的值易生混淆
 
             error.value = errorData;
             errorEvent.trigger(fetchError);

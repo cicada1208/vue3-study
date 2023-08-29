@@ -465,7 +465,8 @@ export function useFetch<T>(
   // setting shallowRef or ref data
   // const data = shallowRef<T | null>(initialData || null);
   const data = (options.shallow ? shallowRef : ref)<T | null>(
-    initialData || null
+    (initialData ? JSON.parse(JSON.stringify(initialData)) : initialData) ||
+      null
   ) as Ref<T | null>;
 
   const canAbort = computed(() => supportsAbort && isFetching.value);

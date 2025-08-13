@@ -20,6 +20,6 @@ module.exports = {
     // override/add rules settings here
     'no-console': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
     'no-debugger': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
-    'linebreak-style': ['off', 'windows'] // 關閉 win os 對換行的 lint
+    'linebreak-style': ['off'] // 關閉換行符號的 lint，因可能跨平台
   }
 };

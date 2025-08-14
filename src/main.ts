@@ -20,5 +20,3 @@ const app = createApp(App);
 app.use(createPinia());
 app.use(router);
 app.mount('#app');
-
-//test 10964-2 b1

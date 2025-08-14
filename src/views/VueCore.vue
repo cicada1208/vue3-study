@@ -124,8 +124,7 @@ function asignTitlePropertyOfDeep() {
     </h2>
     <button @click="asignValueOfShallowRef">asign value of shallowRef</button>
     <button @click="asignTitlePropertyOfDeep">
-      asign title property of deep</button
-    ><br />
+      asign title property of deep</button><br />
     {{ `stodShallowRef.title = ${stodShallowRef.title}` }}<br />
     {{ `stodRef.title = ${stodRef.title}` }}<br />
   </div>

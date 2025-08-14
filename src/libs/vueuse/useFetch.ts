@@ -12,8 +12,8 @@ import {
   until,
   useTimeoutFn
 } from '@vueuse/shared';
-import type { ComputedRef, Ref } from 'vue-demi';
-import { computed, isRef, ref, shallowRef, watch } from 'vue-demi';
+import type { ComputedRef, Ref } from 'vue';
+import { computed, isRef, ref, shallowRef, watch } from 'vue';
 import { defaultWindow } from '@vueuse/core';
 
 export interface UseFetchReturn<T> {

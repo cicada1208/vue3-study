@@ -4,31 +4,31 @@ import { reactive, ref, computed, watch, shallowRef, type Ref } from 'vue';
 
 //#region reactive
 
-// 创建响应式对象或数组
-// 仅对对象类型有效（对象、数组和 Map、Set 这样的集合类型），
-// 而对 string、number 和 boolean 这样的 原始类型 无效。
+// 建立響應式物件或陣列
+// 對物件類型有效：物件、陣列、Map、Set 集合類型
+// 對原始型別無效：string、number、boolean
 const reactiveState = reactive({
   count: 0,
   obj: { title: 'test1' }
 });
 
-// reactive 的响应是 JavaScript Proxy，只有 property 能追蹤响应。
-// 再次對 reactiveState 赋值會失了响应，
-// 例如 reactiveState = reactive({ count: 99 });。
+// reactive 的響應是 JavaScript Proxy，只有 property 能追蹤響應
+// 再次對 reactiveState 賦值會失了響應
+// 例如 reactiveState = reactive({ count: 99 });
 
 function reactiveStateIncrement() {
   reactiveState.count++;
 }
 
-// 当直接侦听一个响应式对象时，侦听器会自动启用深层模式
+// 當直接監聽一個響應式物件時，監聽器會自動啟用深層模式
 watch(reactiveState, newState => console.log(newState));
 
 //#endregion
 
 //#region ref
 
-// 定义响应式变量，创建对任意值的 “引用”
-// 并能在不丢失响应性的前提下传递这些引用。
+// 建立響應式的任意值
+// 並能在不丟失響應性的前提下傳遞這些引用
 // const refState = ref(0);
 const refState = ref({
   count: 0,
@@ -45,14 +45,18 @@ watch(refState, newState => console.log(newState), { deep: true });
 
 //#region computed
 
-// 計算函數中不應變更原數組，需先建立副本再行操作
-// 會變更原數組的分法：pop()、push()、shift()、unshift()、splice()、sort()、reverse()
+// 計算函式中不應變更原陣列，需先建立副本再行操作
+// 會改變原陣列的方法：pop()、push()、shift()、unshift()、splice()、sort()、reverse()
 const numbers = reactive([1, 2, 3, 4, 5]);
 const reverseNumbers = computed(() => [...numbers].reverse());
 
 //#endregion
 
+//#region useDebounceRef
+
 const debouncedText = useDebounceRef('hello', 1000);
+
+//#endregion
 
 //#region css v-bind()
 
@@ -93,7 +97,7 @@ function asignTitlePropertyOfDeep() {
 </script>
 
 <template>
-  <div class="about">
+  <div>
     <h2 id="reactive"><a href="#reactive">reactive</a></h2>
     <button @click="reactiveStateIncrement">
       {{ reactiveState.count }}
@@ -102,7 +106,7 @@ function asignTitlePropertyOfDeep() {
     <h2 id="ref"><a href="#ref">ref</a></h2>
     <button @click="refStateIncrement">
       {{ refState.count }}
-      <!-- 若 refState 為顶层属性，无需 .value -->
+      <!-- 若 refState 為頂層屬性，無需 .value -->
     </button>
 
     <h2 id="computed"><a href="#computed">computed</a></h2>
@@ -110,12 +114,16 @@ function asignTitlePropertyOfDeep() {
       <li v-for="num in reverseNumbers" :key="num">{{ num }}</li>
     </ul>
 
-    <h2 id="useDebounceRef"><a href="#useDebounceRef">useDebounceRef</a></h2>
+    <h2 id="useDebounceRef">
+      <a href="#useDebounceRef">useDebounceRef</a>
+    </h2>
     <p>This debouncedText only updates 1 second after you've stopped typing.</p>
     <p>{{ debouncedText }}</p>
     <input v-model="debouncedText" />
 
-    <h2 id="cssvbind"><a href="#cssvbind">css v-bind()</a></h2>
+    <h2 id="cssvbind">
+      <a href="#cssvbind">css v-bind()</a>
+    </h2>
     <div class="themeColor">show theme color</div>
     <button @click="invertTheme">invert theme color</button>
 

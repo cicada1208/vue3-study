@@ -12,12 +12,16 @@ const reactiveState = reactive({
   obj: { title: 'test1' }
 });
 
+const { count: reactiveCount, obj: reactiveObj } = reactiveState;
+
 // reactive 的響應是 JavaScript Proxy，只有 property 能追蹤響應
 // 再次對 reactiveState 賦值會失了原先引用的響應性連接
 // 例如 reactiveState = reactive({ count: 99 });
 
 function reactiveStateIncrement() {
-  reactiveState.count++;
+  reactiveState.count++; // reactiveCount 失去響應
+  reactiveState.obj.title = 'test2'; // reactiveObj.title 響應
+  // reactiveState.obj = { title: '999' }; // reactiveObj.title 失去響應
 }
 
 // 當直接監聽一個響應式物件時，監聽器會自動啟用深層模式
@@ -35,8 +39,12 @@ const refState = ref({
   obj: { title: 'test1' }
 });
 
+const { count: refCount, obj: refObj } = refState.value;
+
 function refStateIncrement() {
-  refState.value.count++;
+  refState.value.count++; // refCount 失去響應
+  refState.value.obj.title = 'test2'; // refObj.title 響應
+  // refState.value.obj = { title: '999' }; // refObj.title 失去響應
 
   // 修改多筆狀態後，會在 next tick 更新週期，一次全部更新 DOM，如下
   // DOM 未更新
@@ -107,6 +115,9 @@ function asignTitlePropertyOfDeep() {
     <button @click="reactiveStateIncrement">
       {{ reactiveState.count }}
     </button>
+    <br />
+    {{ 'reactiveCount:' + reactiveCount }}
+    {{ 'reactiveObj.title:' + reactiveObj.title }}
 
     <h2 id="ref"><a href="#ref">ref</a></h2>
     <button @click="refStateIncrement">
@@ -115,6 +126,9 @@ function asignTitlePropertyOfDeep() {
       <!-- const object = { id: ref(1) };
        object.id 非頂層屬性，會需 object.id.value -->
     </button>
+    <br />
+    {{ 'refCount:' + refCount }}
+    {{ 'refObj.title:' + refObj.title }}
 
     <h2 id="computed"><a href="#computed">computed</a></h2>
     <ul>

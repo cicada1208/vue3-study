@@ -27,7 +27,7 @@ watch(reactiveState, newState => console.log(newState));
 
 //#region ref
 
-// 建立響應式的任意值
+// 建立響應式任意類型的值
 // 並能在不丟失響應性的前提下傳遞這些引用
 // const refState = ref(0);
 const refState = ref({
@@ -37,6 +37,11 @@ const refState = ref({
 
 function refStateIncrement() {
   refState.value.count++;
+
+  // 修改多筆狀態後，會在 next tick 更新週期，一次全部更新 DOM，如下
+  // DOM 未更新
+  // await nextTick() // 等待 DOM 更新
+  // 現在 DOM 已更新
 }
 
 watch(refState, newState => console.log(newState), { deep: true });

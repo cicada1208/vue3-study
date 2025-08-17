@@ -13,7 +13,7 @@ const reactiveState = reactive({
 });
 
 // reactive 的響應是 JavaScript Proxy，只有 property 能追蹤響應
-// 再次對 reactiveState 賦值會失了響應
+// 再次對 reactiveState 賦值會失了原先引用的響應性連接
 // 例如 reactiveState = reactive({ count: 99 });
 
 function reactiveStateIncrement() {
@@ -112,6 +112,8 @@ function asignTitlePropertyOfDeep() {
     <button @click="refStateIncrement">
       {{ refState.count }}
       <!-- 若 refState 為頂層屬性，無需 .value -->
+      <!-- const object = { id: ref(1) };
+       object.id 非頂層屬性，會需 object.id.value -->
     </button>
 
     <h2 id="computed"><a href="#computed">computed</a></h2>

@@ -24,6 +24,7 @@ function reactiveStateIncrement() {
   // reactiveState.obj = { title: '999' }; // reactiveObj.title 失去響應
 }
 
+// watch：可以做 改變其他響應狀態、非同步請求、更改 DOM
 // 當直接監聽一個響應式物件時，監聽器會自動啟用深層模式
 watch(reactiveState, newState => console.log(newState));
 
@@ -58,7 +59,7 @@ watch(refState, newState => console.log(newState), { deep: true });
 
 //#region computed
 
-// 計算函式 getter 中不要改變其他響應狀態、做非同步請求或更改 DOM
+// computed property getter：不可做 改變其他響應狀態、非同步請求、更改 DOM
 // 不應變更原陣列，需先建立副本再行操作，會改變原陣列的方法：pop()、push()、shift()、unshift()、splice()、sort()、reverse()
 const numbers = reactive([1, 2, 3, 4, 5]);
 const reverseNumbers = computed(() => [...numbers].reverse());

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useDebounceRef } from '@/libs/vueuse/useDebounceRef';
-import { reactive, ref, computed, watch, shallowRef, type Ref, watchEffect } from 'vue';
+import { reactive, ref, computed, watch, shallowRef, type Ref, watchEffect, useTemplateRef, onMounted } from 'vue';
 
 //#region reactive
 
@@ -43,10 +43,10 @@ watch(reactiveState, newState => console.log(newState));
 const watchEffectA = ref(0);
 const watchEffectB = ref(0);
 watchEffect(async () => {
-  console.log('watchEffectA 會被追蹤:', watchEffectA.value)
-  await new Promise(resolve => setTimeout(resolve, 1000))
-  console.log('watchEffectB 不被追蹤:', watchEffectB.value)
-})
+  console.log('watchEffectA 會被追蹤:', watchEffectA.value);
+  await new Promise(resolve => setTimeout(resolve, 1000));
+  console.log('watchEffectB 不被追蹤:', watchEffectB.value);
+});
 
 //#endregion
 
@@ -80,6 +80,8 @@ watch(refState, newState => console.log(newState), { deep: true });
 //#region computed
 
 // computed property getter：
+// 描述響應式狀態的複雜邏輯
+// 計算值會被緩存，響應式依賴更新時才重算
 // 不可做：改變其他響應狀態、非同步請求、更改 DOM
 // 不應變更原陣列，需先建立副本再行操作
 // 會改變原陣列的方法：pop()、push()、shift()、unshift()、splice()、sort()、reverse()
@@ -87,6 +89,17 @@ const numbers = reactive([1, 2, 3, 4, 5]);
 const reverseNumbers = computed(() => [...numbers].reverse());
 
 //#endregion
+
+//#region useTemplateRef
+
+// 模板引用
+const debouncedInput = useTemplateRef("debouncedInput");
+
+onMounted(() => {
+  debouncedInput.value.focus();
+});
+
+////#endregion
 
 //#region useDebounceRef
 
@@ -163,7 +176,7 @@ function asignTitlePropertyOfDeep() {
     </h2>
     <p>This debouncedText only updates 1 second after you've stopped typing.</p>
     <p>{{ debouncedText }}</p>
-    <input v-model="debouncedText" />
+    <input v-model="debouncedText" ref="debouncedInput" />
 
     <h2 id="cssvbind">
       <a href="#cssvbind">css v-bind()</a>

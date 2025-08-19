@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { useDebounceRef } from '@/libs/vueuse/useDebounceRef';
-import { reactive, ref, computed, watch, shallowRef, type Ref } from 'vue';
+import { reactive, ref, computed, watch, shallowRef, type Ref, watchEffect } from 'vue';
 
 //#region reactive
 
-// 建立響應式物件或陣列
+// reactive：建立響應式物件或陣列
 // 對物件類型有效：物件、陣列、Map、Set 集合類型
 // 對原始型別無效：string、number、boolean
 const reactiveState = reactive({
@@ -12,11 +12,11 @@ const reactiveState = reactive({
   obj: { title: 'test1' }
 });
 
-const { count: reactiveCount, obj: reactiveObj } = reactiveState;
-
 // reactive 的響應是 JavaScript Proxy，只有 property 能追蹤響應
 // 再次對 reactiveState 賦值會失了原先引用的響應性連接
 // 例如 reactiveState = reactive({ count: 99 });
+
+const { count: reactiveCount, obj: reactiveObj } = reactiveState;
 
 function reactiveStateIncrement() {
   reactiveState.count++; // reactiveCount 失去響應
@@ -24,15 +24,35 @@ function reactiveStateIncrement() {
   // reactiveState.obj = { title: '999' }; // reactiveObj.title 失去響應
 }
 
-// watch：可以做 改變其他響應狀態、非同步請求、更改 DOM
+// watch & watchEffect：
+// 非同步：都會有 race condition，需做 cancel 機制
+// callback 觸發時機：父組件更新之後，所屬組件 DOM 更新之前調用。若要訪問更新之後的所屬組件 DOM，需使用 flush: 'post' or watchPostEffect()
+
+// watch：
+// 明確追蹤響應式依賴，並在依賴變化時重新執行
+// 可以做：改變其他響應狀態、非同步請求、更改 DOM
 // 當直接監聽一個響應式物件時，監聽器會自動啟用深層模式
 watch(reactiveState, newState => console.log(newState));
+
+// watchEffect(() => { ... })：
+// 自動追蹤 callback 中的響應式依賴，並在依賴變化時重新執行
+// 可以做：改變其他響應狀態、非同步請求、更改 DOM
+// 立即執行：不需 immediate: true
+// 非同步追蹤：第一個 await 前的響應式依賴會被追蹤
+// 僅追蹤 callback 中響應式依賴用到的 property，較 watch 深層監聽高效
+const watchEffectA = ref(0);
+const watchEffectB = ref(0);
+watchEffect(async () => {
+  console.log('watchEffectA 會被追蹤:', watchEffectA.value)
+  await new Promise(resolve => setTimeout(resolve, 1000))
+  console.log('watchEffectB 不被追蹤:', watchEffectB.value)
+})
 
 //#endregion
 
 //#region ref
 
-// 建立響應式任意類型的值
+// ref：建立響應式任意類型的值
 // 並能在不丟失響應性的前提下傳遞這些引用
 // const refState = ref(0);
 const refState = ref({
@@ -59,8 +79,10 @@ watch(refState, newState => console.log(newState), { deep: true });
 
 //#region computed
 
-// computed property getter：不可做 改變其他響應狀態、非同步請求、更改 DOM
-// 不應變更原陣列，需先建立副本再行操作，會改變原陣列的方法：pop()、push()、shift()、unshift()、splice()、sort()、reverse()
+// computed property getter：
+// 不可做：改變其他響應狀態、非同步請求、更改 DOM
+// 不應變更原陣列，需先建立副本再行操作
+// 會改變原陣列的方法：pop()、push()、shift()、unshift()、splice()、sort()、reverse()
 const numbers = reactive([1, 2, 3, 4, 5]);
 const reverseNumbers = computed(() => [...numbers].reverse());
 

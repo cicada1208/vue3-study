@@ -1,10 +1,9 @@
 /// <reference types="vite/client" />
-// triple-slash directive: 作用是告訴 TypeScript 去讀取 vite/client 的型別宣告，讓 TS 知道 Vite 預設提供的一些全域型別
+// triple-slash directive: 作用是告訴 TypeScript 去讀取 vite/client 的型別宣告，讓 TypeScript 知道 Vite 預設提供的一些全域型別
+
 // 型別宣告檔 (*.d.ts)：
-// 作用是幫 TypeScript 認識專案中預設不認識的檔案
-// *.d.ts 只要在 tsconfig.json include 範圍內，便會生效
-// 全域型別宣告檔：在專案任意檔案中可直接呼叫宣告，而不用 import，例如：declare function
-// 模組型別宣告檔：模組匯出的宣告，需 import 使用，例如：export declare function
+// 作用是幫 TypeScript 認識專案中預設不認識的檔案及提供型別資訊
+// 專案內自定義的 (*.d.ts) 只要在 tsconfig.json include 範圍內，便會生效
 
 /**
  * - import.meta.env 物件型別

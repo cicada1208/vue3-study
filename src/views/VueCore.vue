@@ -39,6 +39,13 @@ function reactiveStateIncrement() {
 // 當直接監聽一個響應式物件時，監聽器會自動啟用深層模式
 watch(reactiveState, newState => console.log(newState));
 
+// watch() 或外部函式 useXXX() 傳入參數：
+// 無法保持響應性：傳入 reactiveState.count
+// 可保持響應性：傳入 getter funtion，如下
+// watch(() => reactiveState.count, (newCount) => {
+//   console.log(`Count is: ${newCount}`)
+// })
+
 // watchEffect(() => { ... })：
 // 自動追蹤 callback 中的響應式依賴，並在依賴變化時重新執行
 // 可以做：改變其他響應狀態、非同步請求、更改 DOM

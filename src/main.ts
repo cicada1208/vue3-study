@@ -17,6 +17,14 @@ console.log('NODE_ENV:', process.env.NODE_ENV); // development
 console.log('import.meta.url:', import.meta.url); // http://localhost:5173/src/main.ts?t=1676475192919
 
 const app = createApp(App);
+
+// 全域錯誤處理
+app.config.errorHandler = (err, instance, info) => {
+  console.error('app.config.errorHandler [err]:', err);
+  console.error('app.config.errorHandler [instance]:', instance);
+  console.error('app.config.errorHandler [info]:', info);
+};
+
 app.use(createPinia());
 app.use(router);
 app.mount('#app');

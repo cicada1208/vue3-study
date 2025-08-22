@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useDebounceRef } from '@/libs/vueuse/useDebounceRef';
-import { reactive, ref, computed, watch, shallowRef, type Ref, watchEffect, useTemplateRef, onMounted } from 'vue';
+import { reactive, ref, computed, watch, shallowRef, type Ref, watchEffect, useTemplateRef, onMounted, onErrorCaptured } from 'vue';
+import Error from '@/components/Error.vue';
 
 //#region reactive
 
@@ -23,6 +24,10 @@ function reactiveStateIncrement() {
   reactiveState.obj.title = 'test2'; // reactiveObj.title 響應
   // reactiveState.obj = { title: '999' }; // reactiveObj.title 失去響應
 }
+
+//#endregion
+
+//#region watch
 
 // watch & watchEffect：
 // 非同步：都會有 race condition，需做 cancel 機制
@@ -143,6 +148,20 @@ function asignTitlePropertyOfDeep() {
 }
 
 //#endregion
+
+//#region lifecycle
+
+// onErrorCaptured:
+// 捕獲後代組件傳遞錯誤時調用
+// 默認情況下錯誤由組件繼承鏈向上傳遞 (bubble)，直到 app.config.errorHandler；除非 return false 表示已處理
+onErrorCaptured((err, istance, info) => {
+  console.error('onErrorCaptured [err]:', err);
+  console.error('onErrorCaptured [istance]:', istance); // 觸發錯誤的組件實例
+  console.error('onErrorCaptured [info]:', info); // 錯誤來源類型的字串
+  // return false; // 阻止錯誤向上 bubble，表示已處理
+})
+
+//#endregion
 </script>
 
 <template>
@@ -150,10 +169,9 @@ function asignTitlePropertyOfDeep() {
     <h2 id="reactive"><a href="#reactive">reactive</a></h2>
     <button @click="reactiveStateIncrement">
       {{ reactiveState.count }}
-    </button>
-    <br />
-    {{ 'reactiveCount:' + reactiveCount }}
-    {{ 'reactiveObj.title:' + reactiveObj.title }}
+    </button><br />
+    {{ 'reactiveCount: ' + reactiveCount }} <br />
+    {{ 'reactiveObj.title: ' + reactiveObj.title }} <br />
 
     <h2 id="ref"><a href="#ref">ref</a></h2>
     <button @click="refStateIncrement">
@@ -161,10 +179,9 @@ function asignTitlePropertyOfDeep() {
       <!-- 若 refState 為頂層屬性，無需 .value -->
       <!-- const object = { id: ref(1) };
        object.id 非頂層屬性，會需 object.id.value -->
-    </button>
-    <br />
-    {{ 'refCount:' + refCount }}
-    {{ 'refObj.title:' + refObj.title }}
+    </button><br />
+    {{ 'refCount: ' + refCount }} <br />
+    {{ 'refObj.title: ' + refObj.title }} <br />
 
     <h2 id="computed"><a href="#computed">computed</a></h2>
     <ul>
@@ -175,23 +192,31 @@ function asignTitlePropertyOfDeep() {
       <a href="#useDebounceRef">useDebounceRef</a>
     </h2>
     <p>This debouncedText only updates 1 second after you've stopped typing.</p>
-    <p>{{ debouncedText }}</p>
-    <input v-model="debouncedText" ref="debouncedInput" />
+    <input v-model="debouncedText" ref="debouncedInput" /><br />
+    {{ 'debouncedText: ' + debouncedText }} <br />
 
     <h2 id="cssvbind">
       <a href="#cssvbind">css v-bind()</a>
     </h2>
-    <div class="themeColor">show theme color</div>
     <button @click="invertTheme">invert theme color</button>
+    <div class="themeColor">show theme color</div>
 
     <h2 id="shallowToDeep">
       <a href="#shallowToDeep">shallow to deep</a>
     </h2>
-    <button @click="asignValueOfShallowRef">asign value of shallowRef</button>
+    <button @click="asignValueOfShallowRef">
+      asign value of shallowRef
+    </button>
     <button @click="asignTitlePropertyOfDeep">
-      asign title property of deep</button><br />
-    {{ `stodShallowRef.title = ${stodShallowRef.title}` }}<br />
-    {{ `stodRef.title = ${stodRef.title}` }}<br />
+      asign title property of deep
+    </button><br />
+    {{ `stodShallowRef.title = ${stodShallowRef.title}` }} <br />
+    {{ `stodRef.title = ${stodRef.title}` }} <br />
+
+    <h2 id="error">
+      <a href="#error">error</a>
+    </h2>
+    <Error />
   </div>
 </template>
 

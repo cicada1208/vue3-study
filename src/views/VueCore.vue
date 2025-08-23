@@ -225,7 +225,8 @@ onErrorCaptured((err, istance, info) => {
     <h2 id="component">
       <a href="#component">component</a>
     </h2>
-    <CustomComponent :count="refState.count" :obj="refState.obj" />
+    <CustomComponent :count="refState.count" :obj="refState.obj"
+      @custom-event="console.log('emit custom-event with id: ', $event)" />
 
     <h2 id="error">
       <a href="#error">error</a>

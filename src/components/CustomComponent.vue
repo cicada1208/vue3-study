@@ -7,7 +7,7 @@ import { ref, watchEffect } from 'vue';
 //   count?: number
 //   obj?: { title: string }
 // }>();
-const { count } = defineProps<{
+const { count, obj } = defineProps<{
   count?: number
   obj?: { title: string }
 }>();
@@ -18,16 +18,24 @@ watchEffect(() => {
   console.log('CustomComponent Props [count]:', count);
   // 由 defineProps 解構後的變量 vue 會自動添加 props.，等同如下
   // console.log('CustomComponent Props [count]: ', props.count);
+
+  console.log('CustomComponent Props [obj.title]:', obj.title)
 });
 
 // 依據 Props 作為初值，但之後不會再隨 Props 變化
 const countRef = ref(count);
 
+const emit = defineEmits<{
+  (e: 'custom-event', id: number): void
+}>()
+
 </script>
 
 <template>
   <div>
+    {{ 'countRef: ' + countRef }} <br />
     {{ 'CustomComponent Props [count]: ' + count }} <br />
-    {{ 'countRef: ' + countRef }}
+    {{ 'CustomComponent Props [obj.title]: ' + obj.title }} <br />
+    <button @click="emit('custom-event', Math.floor(Math.random() * 100))">emit custom-event</button>
   </div>
 </template>

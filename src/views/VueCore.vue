@@ -1,9 +1,8 @@
 <script setup lang="ts">
 import { useDebounceRef } from '@/libs/vueuse/useDebounceRef';
-import { reactive, ref, computed, watch, shallowRef, type Ref, watchEffect, useTemplateRef, onMounted, onErrorCaptured } from 'vue';
+import { reactive, ref, computed, watch, watchEffect, useTemplateRef, onMounted, onErrorCaptured } from 'vue';
 import Error from '@/components/Error.vue';
 import CustomComponent from '@/components/CustomComponent.vue';
-import { title } from 'process';
 
 //#region reactive
 
@@ -15,7 +14,7 @@ const reactiveState = reactive({
   obj: { title: 'test' }
 });
 
-// reactive 的響應是 JavaScript Proxy，只有 property 能追蹤響應
+// reactive 的響應是透過 JavaScript Proxy，只有 property 能追蹤響應
 // 再次對 reactiveState 賦值會失了原先引用的響應性連接
 // 例如 reactiveState = reactive({ count: 99 });
 
@@ -23,7 +22,7 @@ const { count: reactiveCount, obj: reactiveObj } = reactiveState;
 
 function reactiveStateIncrement() {
   reactiveState.count++; // reactiveCount 失去響應
-  reactiveState.obj.title = `test${refState.value.count}`; // reactiveObj.title 響應
+  reactiveState.obj.title = `test ${refState.value.count}`; // reactiveObj.title 響應
   // reactiveState.obj = { title: '999' }; // reactiveObj.title 失去響應
 }
 
@@ -32,7 +31,7 @@ function reactiveStateIncrement() {
 //#region watch
 
 // watch & watchEffect：
-// 非同步：都會有 race condition，需做 cancel 機制
+// 非同步：會有 race condition，需做 cancel 機制
 // callback 觸發時機：父組件更新之後，所屬組件 DOM 更新之前調用。若要訪問更新之後的所屬組件 DOM，需使用 flush: 'post' or watchPostEffect()
 
 // watch：
@@ -41,8 +40,8 @@ function reactiveStateIncrement() {
 // 當直接監聽一個響應式物件時，監聽器會自動啟用深層模式
 watch(reactiveState, newState => console.log(newState));
 
-// watch() 或外部函式 useXXX() 傳入參數：
-// 無法保持響應性：傳入 reactiveState.count
+// watch() 或組合式函式 useXXX() 傳入參數：
+// 無法保持響應性：傳入值 reactiveState.count
 // 可保持響應性：傳入 getter funtion，如下
 // watch(() => reactiveState.count, (newCount) => {
 //   console.log(`Count is: ${newCount}`)
@@ -78,7 +77,7 @@ const { count: refCount, obj: refObj } = refState.value;
 
 function refStateIncrement() {
   refState.value.count++; // refCount 失去響應
-  refState.value.obj.title = `test${refState.value.count}`; // refObj.title 響應
+  refState.value.obj.title = `test ${refState.value.count}`; // refObj.title 響應
   // refState.value.obj = { title: '999' }; // refObj.title 失去響應
 
   // 修改多筆狀態後，會在 next tick 更新週期，一次全部更新 DOM，如下
@@ -138,24 +137,24 @@ function invertTheme() {
 //#region shallow to deep
 //非正規，不確定有無後遺症
 
-interface IStoD {
-  title?: string;
-}
+// interface IStoD {
+//   title?: string;
+// }
 
-const stodShallowRef = shallowRef<IStoD>({ title: 'initial data' });
-const stodRef: Ref<IStoD> = ref(reactive(stodShallowRef));
+// const stodShallowRef = shallowRef<IStoD>({ title: 'initial data' });
+// const stodRef: Ref<IStoD> = ref(reactive(stodShallowRef));
 
-function asignValueOfShallowRef() {
-  stodShallowRef.value = { title: 'asign value of shallowRef' };
-  console.log('stodShallowRef:', stodShallowRef);
-  console.log('stodRef:', stodRef);
-}
+// function asignValueOfShallowRef() {
+//   stodShallowRef.value = { title: 'asign value of shallowRef' };
+//   console.log('stodShallowRef:', stodShallowRef);
+//   console.log('stodRef:', stodRef);
+// }
 
-function asignTitlePropertyOfDeep() {
-  stodRef.value.title = 'asign title property of deep';
-  console.log('stodShallowRef:', stodShallowRef);
-  console.log('stodRef:', stodRef);
-}
+// function asignTitlePropertyOfDeep() {
+//   stodRef.value.title = 'asign title property of deep';
+//   console.log('stodShallowRef:', stodShallowRef);
+//   console.log('stodRef:', stodRef);
+// }
 
 //#endregion
 
@@ -211,7 +210,7 @@ onErrorCaptured((err, istance, info) => {
     <button @click="invertTheme">invert theme color</button>
     <div class="themeColor">show theme color</div>
 
-    <h2 id="shallowToDeep">
+    <!-- <h2 id="shallowToDeep">
       <a href="#shallowToDeep">shallow to deep</a>
     </h2>
     <button @click="asignValueOfShallowRef">
@@ -221,7 +220,7 @@ onErrorCaptured((err, istance, info) => {
       asign title property of deep
     </button><br />
     {{ `stodShallowRef.title = ${stodShallowRef.title}` }} <br />
-    {{ `stodRef.title = ${stodRef.title}` }} <br />
+    {{ `stodRef.title = ${stodRef.title}` }} <br /> -->
 
     <h2 id="component">
       <a href="#component">component</a>

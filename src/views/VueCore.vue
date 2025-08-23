@@ -2,6 +2,8 @@
 import { useDebounceRef } from '@/libs/vueuse/useDebounceRef';
 import { reactive, ref, computed, watch, shallowRef, type Ref, watchEffect, useTemplateRef, onMounted, onErrorCaptured } from 'vue';
 import Error from '@/components/Error.vue';
+import CustomComponent from '@/components/CustomComponent.vue';
+import { title } from 'process';
 
 //#region reactive
 
@@ -10,7 +12,7 @@ import Error from '@/components/Error.vue';
 // 對原始型別無效：string、number、boolean
 const reactiveState = reactive({
   count: 0,
-  obj: { title: 'test1' }
+  obj: { title: 'test' }
 });
 
 // reactive 的響應是 JavaScript Proxy，只有 property 能追蹤響應
@@ -21,7 +23,7 @@ const { count: reactiveCount, obj: reactiveObj } = reactiveState;
 
 function reactiveStateIncrement() {
   reactiveState.count++; // reactiveCount 失去響應
-  reactiveState.obj.title = 'test2'; // reactiveObj.title 響應
+  reactiveState.obj.title = `test${refState.value.count}`; // reactiveObj.title 響應
   // reactiveState.obj = { title: '999' }; // reactiveObj.title 失去響應
 }
 
@@ -69,14 +71,14 @@ watchEffect(async () => {
 // const refState = ref(0);
 const refState = ref({
   count: 0,
-  obj: { title: 'test1' }
+  obj: { title: 'test' }
 });
 
 const { count: refCount, obj: refObj } = refState.value;
 
 function refStateIncrement() {
   refState.value.count++; // refCount 失去響應
-  refState.value.obj.title = 'test2'; // refObj.title 響應
+  refState.value.obj.title = `test${refState.value.count}`; // refObj.title 響應
   // refState.value.obj = { title: '999' }; // refObj.title 失去響應
 
   // 修改多筆狀態後，會在 next tick 更新週期，一次全部更新 DOM，如下
@@ -85,7 +87,8 @@ function refStateIncrement() {
   // 現在 DOM 已更新
 }
 
-watch(refState, newState => console.log(newState), { deep: true });
+watch(refState.value, newState => console.log(newState));
+// watch(refState, newState => console.log(newState), { deep: true }); // 結果同上
 
 //#endregion
 
@@ -219,6 +222,11 @@ onErrorCaptured((err, istance, info) => {
     </button><br />
     {{ `stodShallowRef.title = ${stodShallowRef.title}` }} <br />
     {{ `stodRef.title = ${stodRef.title}` }} <br />
+
+    <h2 id="component">
+      <a href="#component">component</a>
+    </h2>
+    <CustomComponent :count="refState.count" :obj="refState.obj" />
 
     <h2 id="error">
       <a href="#error">error</a>

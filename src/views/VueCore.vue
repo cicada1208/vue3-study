@@ -240,7 +240,8 @@ onErrorCaptured((err, istance, info) => {
     </button>
     <CustomComponent :count="prop.count" :obj="prop.obj"
       @custom-event="console.log('listen custom-event with id: ', $event)" v-model.trim="nameModel"
-      v-model:last-name.capitalize="lastNameModel" />
+      v-model:last-name.capitalize="lastNameModel" attr-var="attr-var-value" @attr-event=""
+      v-model:attr-model="nameModel" style="background-color:darkslategrey;" />
     {{ 'nameModel: ' + nameModel }} <br />
     {{ 'lastNameModel: ' + lastNameModel }} <br />
 

@@ -22,7 +22,7 @@ const { count: reactiveCount, obj: reactiveObj } = reactiveState;
 
 function reactiveStateIncrement() {
   reactiveState.count++; // reactiveCount 失去響應
-  reactiveState.obj.title = `test ${refState.value.count}`; // reactiveObj.title 響應
+  reactiveState.obj.title = `test ${reactiveState.count}`; // reactiveObj.title 響應
   // reactiveState.obj = { title: '999' }; // reactiveObj.title 失去響應
 }
 
@@ -38,13 +38,13 @@ function reactiveStateIncrement() {
 // 明確追蹤響應式依賴，並在依賴變化時重新執行
 // 可以做：改變其他響應狀態、非同步請求、更改 DOM
 // 當直接監聽一個響應式物件時，監聽器會自動啟用深層模式
-watch(reactiveState, newState => console.log(newState));
+watch(reactiveState, newState => console.log('reactiveState:', newState));
 
 // watch() 或組合式函式 useXXX() 傳入參數：
 // 無法保持響應性：傳入值 reactiveState.count
 // 可保持響應性：傳入 getter funtion，如下
 // watch(() => reactiveState.count, (newCount) => {
-//   console.log(`Count is: ${newCount}`)
+//   console.log(`reactiveState.count: ${newCount}`)
 // })
 
 // watchEffect(() => { ... })：
@@ -86,7 +86,7 @@ function refStateIncrement() {
   // 現在 DOM 已更新
 }
 
-watch(refState.value, newState => console.log(newState));
+watch(refState.value, newState => console.log('refState:', newState));
 // watch(refState, newState => console.log(newState), { deep: true }); // 結果同上
 
 //#endregion
@@ -107,10 +107,10 @@ const reverseNumbers = computed(() => [...numbers].reverse());
 //#region useTemplateRef
 
 // 模板引用
-const debouncedInput = useTemplateRef("debouncedInput");
+const focusInput = useTemplateRef("focusInput");
 
 onMounted(() => {
-  debouncedInput.value.focus();
+  focusInput.value.focus();
 });
 
 //#endregion
@@ -131,6 +131,37 @@ function invertTheme() {
   if (theme.color === 'red') theme.color = 'blue';
   else theme.color = 'red';
 }
+
+//#endregion
+
+//#region component
+
+const prop = ref({
+  count: 0,
+  obj: { title: 'prop title' }
+});
+
+function propIncrement() {
+  prop.value.count++;
+  prop.value.obj.title = `prop title ${prop.value.count}`;
+}
+
+const nameModel = ref('name');
+const lastNameModel = ref('last name');
+
+//#endregion
+
+//#region lifecycle
+
+// onErrorCaptured:
+// 捕獲後代組件傳遞錯誤時調用
+// 默認情況下錯誤由組件繼承鏈向上傳遞 (bubble)，直到 app.config.errorHandler；除非 return false 表示已處理
+onErrorCaptured((err, istance, info) => {
+  console.error('onErrorCaptured [err]:', err);
+  console.error('onErrorCaptured [istance]:', istance); // 觸發錯誤的組件實例
+  console.error('onErrorCaptured [info]:', info); // 錯誤來源類型的字串
+  // return false; // 阻止錯誤向上 bubble，表示已處理
+})
 
 //#endregion
 
@@ -155,20 +186,6 @@ function invertTheme() {
 //   console.log('stodShallowRef:', stodShallowRef);
 //   console.log('stodRef:', stodRef);
 // }
-
-//#endregion
-
-//#region lifecycle
-
-// onErrorCaptured:
-// 捕獲後代組件傳遞錯誤時調用
-// 默認情況下錯誤由組件繼承鏈向上傳遞 (bubble)，直到 app.config.errorHandler；除非 return false 表示已處理
-onErrorCaptured((err, istance, info) => {
-  console.error('onErrorCaptured [err]:', err);
-  console.error('onErrorCaptured [istance]:', istance); // 觸發錯誤的組件實例
-  console.error('onErrorCaptured [info]:', info); // 錯誤來源類型的字串
-  // return false; // 阻止錯誤向上 bubble，表示已處理
-})
 
 //#endregion
 </script>
@@ -197,11 +214,16 @@ onErrorCaptured((err, istance, info) => {
       <li v-for="num in reverseNumbers" :key="num">{{ num }}</li>
     </ul>
 
+    <h2 id="useTemplateRef">
+      <a href="#useTemplateRef">useTemplateRef</a>
+    </h2>
+    <input ref="focusInput" value="focus this input" />
+
     <h2 id="useDebounceRef">
       <a href="#useDebounceRef">useDebounceRef</a>
     </h2>
     <p>This debouncedText only updates 1 second after you've stopped typing.</p>
-    <input v-model="debouncedText" ref="debouncedInput" /><br />
+    <input v-model="debouncedText" /><br />
     {{ 'debouncedText: ' + debouncedText }} <br />
 
     <h2 id="cssvbind">
@@ -209,6 +231,23 @@ onErrorCaptured((err, istance, info) => {
     </h2>
     <button @click="invertTheme">invert theme color</button>
     <div class="themeColor">show theme color</div>
+
+    <h2 id="component">
+      <a href="#component">component</a>
+    </h2>
+    <button @click="propIncrement">
+      {{ prop.count }}
+    </button>
+    <CustomComponent :count="prop.count" :obj="prop.obj"
+      @custom-event="console.log('listen custom-event with id: ', $event)" v-model.trim="nameModel"
+      v-model:last-name.capitalize="lastNameModel" />
+    {{ 'nameModel: ' + nameModel }} <br />
+    {{ 'lastNameModel: ' + lastNameModel }} <br />
+
+    <h2 id="onErrorCaptured">
+      <a href="#onErrorCaptured">onErrorCaptured</a>
+    </h2>
+    <Error />
 
     <!-- <h2 id="shallowToDeep">
       <a href="#shallowToDeep">shallow to deep</a>
@@ -221,17 +260,6 @@ onErrorCaptured((err, istance, info) => {
     </button><br />
     {{ `stodShallowRef.title = ${stodShallowRef.title}` }} <br />
     {{ `stodRef.title = ${stodRef.title}` }} <br /> -->
-
-    <h2 id="component">
-      <a href="#component">component</a>
-    </h2>
-    <CustomComponent :count="refState.count" :obj="refState.obj"
-      @custom-event="console.log('emit custom-event with id: ', $event)" />
-
-    <h2 id="error">
-      <a href="#error">error</a>
-    </h2>
-    <Error />
   </div>
 </template>
 

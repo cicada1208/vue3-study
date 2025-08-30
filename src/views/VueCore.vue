@@ -48,7 +48,7 @@ watch(reactiveState, newState => console.log('reactiveState:', newState));
 // })
 
 // watchEffect(() => { ... })：
-// 自動追蹤 callback 中的響應式依賴，並在依賴變化時重新執行
+// 自動追蹤 callback 中的響應式依賴(該依賴為取值 get 不是賦值 set)，並在依賴變化時重新執行
 // 可以做：改變其他響應狀態、非同步請求、更改 DOM
 // 立即執行：不需 immediate: true
 // 非同步追蹤：第一個 await 前的響應式依賴會被追蹤

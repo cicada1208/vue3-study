@@ -4,4 +4,4 @@ export default {
   loading: '讀取資料中。',
   loadSuccess: '讀取資料成功。',
   loadFailure: '讀取資料失敗。'
-};
+} as const;

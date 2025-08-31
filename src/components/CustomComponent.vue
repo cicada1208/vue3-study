@@ -1,5 +1,8 @@
 <script lang="ts" setup>
-import { ref, useAttrs, watchEffect } from 'vue';
+import injections from '@/consts/injections';
+import { inject, ref, useAttrs, watchEffect } from 'vue';
+
+//#region props
 
 // props:
 // 唯讀、響應式
@@ -22,12 +25,24 @@ watchEffect(() => {
   console.log('CustomComponent props [obj.title]:', obj.title)
 });
 
+//#endregion
+
+//#region init by prop
+
 // 依據 props 作為初值，但之後不會再隨 props 變化
 const initialCountRef = ref(count);
+
+//#endregion
+
+//#region emit
 
 const emit = defineEmits<{
   (e: 'custom-event', id: number): void
 }>();
+
+//#endregion
+
+//#region v-model
 
 // const props = defineProps<{ modelValue?: string }>();
 // const emit = defineEmits<{
@@ -45,6 +60,10 @@ const [lastName, lastNameModifiers] = defineModel<string>('lastName', {
   }
 });
 
+//#endregion
+
+//#region attrs
+
 // attrs:
 // 透傳 attributes：未被該組件聲明為 props、emits 的 attributes，例如 class、style、id
 // 非響應式
@@ -57,15 +76,26 @@ console.log('attrs:', attrs);
 // defineOptions({
 //   inheritAttrs: false
 // });
+
+//#endregion
+
+//#region provide / inject
+
+const { location, updateLocation } = inject(injections.location);
+
+//#endregion
+
 </script>
 
 <template>
   <div>
-    {{ 'initialCountRef: ' + initialCountRef }} <br />
     {{ 'CustomComponent props [count]: ' + count }} <br />
     {{ 'CustomComponent props [obj.title]: ' + obj.title }} <br />
+    {{ 'initialCountRef: ' + initialCountRef }} <br />
 
-    <button @click="emit('custom-event', Math.floor(Math.random() * 100))">emit custom-event</button><br />
+    <button @click="emit('custom-event', Math.floor(Math.random() * 100))">
+      emit custom-event
+    </button><br />
 
     <!--
     <input :value="props.modelValue" @input="emit('update:modelValue', $event.target.value)" /><br />
@@ -77,5 +107,9 @@ console.log('attrs:', attrs);
     <!-- <div v-bind="$attrs">
       手動指定繼承 attributes 的元素
     </div> -->
+
+    <button @click="updateLocation">
+      {{ 'provide / inject: ' + location }}
+    </button>
   </div>
 </template>

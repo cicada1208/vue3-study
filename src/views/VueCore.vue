@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { useDebounceRef } from '@/libs/vueuse/useDebounceRef';
-import { reactive, ref, computed, watch, watchEffect, useTemplateRef, onMounted, onErrorCaptured } from 'vue';
+import { reactive, ref, computed, watch, watchEffect, useTemplateRef, onMounted, onErrorCaptured, provide, readonly } from 'vue';
 import Error from '@/components/Error.vue';
 import CustomComponent from '@/components/CustomComponent.vue';
+import injections from '@/consts/injections';
 
 //#region reactive
 
@@ -104,36 +105,6 @@ const reverseNumbers = computed(() => [...numbers].reverse());
 
 //#endregion
 
-//#region useTemplateRef
-
-// 模板引用
-const focusInput = useTemplateRef("focusInput");
-
-onMounted(() => {
-  focusInput.value.focus();
-});
-
-//#endregion
-
-//#region useDebounceRef
-
-const debouncedText = useDebounceRef('hello', 1000);
-
-//#endregion
-
-//#region css v-bind()
-
-const theme = reactive({
-  color: 'red'
-});
-
-function invertTheme() {
-  if (theme.color === 'red') theme.color = 'blue';
-  else theme.color = 'red';
-}
-
-//#endregion
-
 //#region component
 
 const prop = ref({
@@ -162,6 +133,51 @@ onErrorCaptured((err, istance, info) => {
   console.error('onErrorCaptured [info]:', info); // 錯誤來源類型的字串
   // return false; // 阻止錯誤向上 bubble，表示已處理
 })
+
+//#endregion
+
+//#region provide / inject
+
+const location = ref('North Pole');
+
+function updateLocation() {
+  location.value = 'South Pole';
+}
+
+provide(injections.location, {
+  location: readonly(location),
+  updateLocation
+});
+
+//#endregion
+
+//#region useTemplateRef
+
+// 模板引用
+const focusInput = useTemplateRef("focusInput");
+
+onMounted(() => {
+  focusInput.value.focus();
+});
+
+//#endregion
+
+//#region useDebounceRef
+
+const debouncedText = useDebounceRef('hello', 1000);
+
+//#endregion
+
+//#region css v-bind()
+
+const theme = reactive({
+  color: 'red'
+});
+
+function invertTheme() {
+  if (theme.color === 'red') theme.color = 'blue';
+  else theme.color = 'red';
+}
 
 //#endregion
 
@@ -214,24 +230,6 @@ onErrorCaptured((err, istance, info) => {
       <li v-for="num in reverseNumbers" :key="num">{{ num }}</li>
     </ul>
 
-    <h2 id="useTemplateRef">
-      <a href="#useTemplateRef">useTemplateRef</a>
-    </h2>
-    <input ref="focusInput" value="focus this input" />
-
-    <h2 id="useDebounceRef">
-      <a href="#useDebounceRef">useDebounceRef</a>
-    </h2>
-    <p>This debouncedText only updates 1 second after you've stopped typing.</p>
-    <input v-model="debouncedText" /><br />
-    {{ 'debouncedText: ' + debouncedText }} <br />
-
-    <h2 id="cssvbind">
-      <a href="#cssvbind">css v-bind()</a>
-    </h2>
-    <button @click="invertTheme">invert theme color</button>
-    <div class="themeColor">show theme color</div>
-
     <h2 id="component">
       <a href="#component">component</a>
     </h2>
@@ -249,6 +247,24 @@ onErrorCaptured((err, istance, info) => {
       <a href="#onErrorCaptured">onErrorCaptured</a>
     </h2>
     <Error />
+
+    <h2 id="useTemplateRef">
+      <a href="#useTemplateRef">useTemplateRef</a>
+    </h2>
+    <input ref="focusInput" value="focus this input" />
+
+    <h2 id="useDebounceRef">
+      <a href="#useDebounceRef">useDebounceRef</a>
+    </h2>
+    <p>This debouncedText only updates 1 second after you've stopped typing.</p>
+    <input v-model="debouncedText" /><br />
+    {{ 'debouncedText: ' + debouncedText }} <br />
+
+    <h2 id="cssvbind">
+      <a href="#cssvbind">css v-bind()</a>
+    </h2>
+    <button @click="invertTheme">invert theme color</button>
+    <div class="themeColor">show theme color</div>
 
     <!-- <h2 id="shallowToDeep">
       <a href="#shallowToDeep">shallow to deep</a>

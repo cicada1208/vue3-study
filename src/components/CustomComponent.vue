@@ -10,9 +10,10 @@ import { inject, ref, useAttrs, watchEffect } from 'vue';
 //   count?: number
 //   obj?: { title: string }
 // }>();
-const { count, obj } = defineProps<{
+const { count, obj, propWithDefault = ['one', 'two'] } = defineProps<{
   count?: number
-  obj?: { title: string }
+  obj?: { title: string },
+  propWithDefault?: Array<string>
 }>();
 
 watchEffect(() => {
@@ -27,7 +28,7 @@ watchEffect(() => {
 
 //#endregion
 
-//#region init by prop
+//#region init with prop
 
 // 依據 props 作為初值，但之後不會再隨 props 變化
 const initialCountRef = ref(count);
@@ -39,6 +40,9 @@ const initialCountRef = ref(count);
 const emit = defineEmits<{
   (e: 'custom-event', id: number): void
 }>();
+// const emit = defineEmits<{
+//   "custom-event": [id: number] // 具名元組
+// }>();
 
 //#endregion
 
@@ -91,7 +95,8 @@ const { location, updateLocation } = inject(injections.location);
   <div>
     {{ 'CustomComponent props [count]: ' + count }} <br />
     {{ 'CustomComponent props [obj.title]: ' + obj.title }} <br />
-    {{ 'initialCountRef: ' + initialCountRef }} <br />
+    {{ 'CustomComponent props [propWithDefault]: ' + propWithDefault }} <br />
+    {{ 'Init with CustomComponent prop [initialCountRef]: ' + initialCountRef }} <br />
 
     <button @click="emit('custom-event', Math.floor(Math.random() * 100))">
       emit custom-event

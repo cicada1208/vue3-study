@@ -68,7 +68,7 @@ watchEffect(async () => {
 
 // ref：建立響應式任意類型的值
 // 並能在不丟失響應性的前提下傳遞這些引用
-// const refState = ref(0);
+// const year = ref<string | number>('2020') // 覆蓋默認類型推導
 const refState = ref({
   count: 0,
   obj: { title: 'test' }

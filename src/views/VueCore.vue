@@ -169,13 +169,41 @@ const counterStore = useCounterStore();
 // });
 // counterStore.$state = { count: 99 }; // pinia 實際會 call $patch 變更 state
 
-// 訂閱監聽 state 變更
+// 訂閱 state 監聽變更
 // $subscribe 在 $patch 後只觸發一次
-// 可做全域監聽：寫於 main.ts
+// 可做全域監聽：寫於 main.ts 此行 app.use(createPinia()) 之後
 counterStore.$subscribe((mutation, state) => {
-  console.log('counter store $subscribe [mutation] 發生變更', mutation);
-  console.log('counter store $subscribe [state] 最新 state', state);
+  console.log(`${mutation.storeId} store $subscribe [mutation] 發生變更`, mutation);
+  console.log(`${mutation.storeId} store $subscribe [state] 最新 state`, state);
 });
+
+// 訂閱 action 監聽結果
+counterStore.$onAction(
+  ({
+    name, // action 名稱
+    store, // store 實例
+    args, // 傳遞給 action 的參數
+    after, // action return or resolve 後調用
+    onError, // action throw exception or reject 後調用
+  }) => {
+    const startTime = Date.now()
+
+    console.log(`${store.$id} store ${name} action start with params:`, args) // 這將在執行 store action 之前觸發
+
+    after((result) => {
+      console.log(
+        `${store.$id} store ${name} action finished after ${Date.now() - startTime
+        }ms. result: ${result}.`
+      )
+    })
+
+    onError((error) => {
+      console.warn(
+        `${store.$id} store ${name} action failed after ${Date.now() - startTime}ms. error: ${error}.`
+      )
+    })
+  }
+)
 
 //#endregion
 

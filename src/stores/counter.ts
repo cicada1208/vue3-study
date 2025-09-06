@@ -1,5 +1,5 @@
 import { ref, computed } from 'vue';
-import { defineStore } from 'pinia';
+import { defineStore, acceptHMRUpdate } from 'pinia';
 
 // Pinia：響應式全域狀態及業務邏輯
 // 推薦命名方式：useXXXStore
@@ -20,3 +20,7 @@ export const useCounterStore = defineStore('counter', () => {
 
   return { count, doubleCount, $reset, increment };
 });
+
+if (import.meta.hot) {
+  import.meta.hot.accept(acceptHMRUpdate(useCounterStore, import.meta.hot));
+}

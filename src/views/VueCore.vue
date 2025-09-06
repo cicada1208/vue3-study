@@ -4,6 +4,8 @@ import { reactive, ref, computed, watch, watchEffect, useTemplateRef, onMounted,
 import Error from '@/components/Error.vue';
 import CustomComponent from '@/components/CustomComponent.vue';
 import injections from '@/consts/injections';
+import { useCounterStore } from '@/stores/counter';
+import { storeToRefs } from 'pinia';
 
 //#region reactive
 
@@ -151,6 +153,15 @@ provide(injections.location, {
 
 //#endregion
 
+//#region pinia
+
+const counter = useCounterStore();
+// 無法解構賦值，需透過 storeToRefs 保持響應
+// const { count, doubleCount } = storeToRefs(counter);
+// const { increment } = counter;
+
+//#endregion
+
 //#region useTemplateRef
 
 // 模板引用
@@ -247,6 +258,16 @@ function invertTheme() {
       <a href="#onErrorCaptured">onErrorCaptured</a>
     </h2>
     <Error />
+
+    <h2 id="pinia">
+      <a href="#pinia">pinia</a>
+    </h2>
+    <button @click="counter.increment">
+      counter store increment: {{ counter.count }}
+    </button>
+    <button @click="counter.$reset">
+      reset counter store state
+    </button>
 
     <h2 id="useTemplateRef">
       <a href="#useTemplateRef">useTemplateRef</a>

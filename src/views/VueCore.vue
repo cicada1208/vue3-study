@@ -155,10 +155,27 @@ provide(injections.location, {
 
 //#region pinia
 
-const counter = useCounterStore();
+const counterStore = useCounterStore();
+
 // 無法解構賦值，需透過 storeToRefs 保持響應
-// const { count, doubleCount } = storeToRefs(counter);
-// const { increment } = counter;
+// const { count, doubleCount } = storeToRefs(counterStore);
+// const { increment } = counterStore;
+
+// 變更 state
+// counterStore.count = 99;
+// counterStore.$patch({ count: 99 });
+// counterStore.$patch(() => {
+//   counterStore.count = 99;
+// });
+// counterStore.$state = { count: 99 }; // pinia 實際會 call $patch 變更 state
+
+// 訂閱監聽 state 變更
+// $subscribe 在 $patch 後只觸發一次
+// 可做全域監聽：寫於 main.ts
+counterStore.$subscribe((mutation, state) => {
+  console.log('counter store $subscribe [mutation] 發生變更', mutation);
+  console.log('counter store $subscribe [state] 最新 state', state);
+});
 
 //#endregion
 
@@ -262,10 +279,10 @@ function invertTheme() {
     <h2 id="pinia">
       <a href="#pinia">pinia</a>
     </h2>
-    <button @click="counter.increment">
-      counter store increment: {{ counter.count }}
+    <button @click="counterStore.increment">
+      counter store increment: {{ counterStore.count }}
     </button>
-    <button @click="counter.$reset">
+    <button @click="counterStore.$reset">
       reset counter store state
     </button>
 

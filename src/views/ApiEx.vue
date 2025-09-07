@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { ApiContent } from '@/libs/models/api-content';
-import { ApiResult } from '@/libs/models/api-result';
+import { ApiContent } from '@/infrastructure/models/api-content';
+import { ApiResult } from '@/infrastructure/models/api-result';
 import { Users } from '@/models/users';
 import type { NisPatInfo, INisPatInfo } from '@/models/nis-pat-info';
 import { computed, ref, watch } from 'vue';
 import { until } from '@vueuse/core';
-import { useFetch } from '@/libs/vueuse/useFetch';
+import { useFetch } from '@/infrastructure/vueuse/useFetch';
 import { ndbApi, useFetchNdb } from '@/services';
 import ndbRoutes from '@/services/ndb-routes';
 
@@ -216,8 +216,7 @@ async function fetchUserContent2() {
 
     <h2 id="apiUtil"><a href="#apiUtil">apiUtil</a></h2>
     <button @click="cancelThenFetchNisPatInfoContent">
-      cancelThenFetchNisPatInfoContent</button
-    ><br />
+      cancelThenFetchNisPatInfoContent</button><br />
     {{ `nisPatInfoConten.loading: ${nisPatInfoContent.loading}` }}<br />
     nisPatInfoContent.rst:
     {{ nisPatInfoContent.rst }}<br />

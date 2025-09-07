@@ -1,4 +1,4 @@
-import msgConst from '@/libs/consts/msg-const';
+import msgConst from '@/infrastructure/consts/msg-const';
 
 export interface IApiResult<TData = unknown> {
   Succ?: boolean;

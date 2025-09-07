@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useDebounceRef } from '@/libs/vueuse/useDebounceRef';
+import { useDebounceRef } from '@/infrastructure/vueuse/useDebounceRef';
 import { reactive, ref, computed, watch, watchEffect, useTemplateRef, onMounted, onErrorCaptured, provide, readonly } from 'vue';
 import Error from '@/components/Error.vue';
 import CustomComponent from '@/components/CustomComponent.vue';

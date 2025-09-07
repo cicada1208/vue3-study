@@ -217,7 +217,7 @@ async function fetchUserContent2() {
     <h2 id="apiUtil"><a href="#apiUtil">apiUtil</a></h2>
     <button @click="cancelThenFetchNisPatInfoContent">
       cancelThenFetchNisPatInfoContent</button><br />
-    {{ `nisPatInfoConten.loading: ${nisPatInfoContent.loading}` }}<br />
+    {{ `nisPatInfoContent.loading: ${nisPatInfoContent.loading}` }}<br />
     nisPatInfoContent.rst:
     {{ nisPatInfoContent.rst }}<br />
 

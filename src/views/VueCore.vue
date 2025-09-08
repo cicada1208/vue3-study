@@ -5,7 +5,6 @@ import Error from '@/components/Error.vue';
 import CustomComponent from '@/components/CustomComponent.vue';
 import injections from '@/consts/injections';
 import { useCounterStore } from '@/stores/counter';
-import { storeToRefs } from 'pinia';
 
 //#region reactive
 
@@ -17,7 +16,11 @@ const reactiveState = reactive({
   obj: { title: 'test' }
 });
 
-// reactive 的響應是透過 JavaScript Proxy，只有 property 能追蹤響應
+// reactive 的響應是透過 JavaScript Proxy：
+// 只有 property 能追蹤響應
+// 能攔截新增屬性、刪除屬性、讀取屬性、修改屬性
+// 例如 const test = reactive({}); // ref({}) 亦同
+// test.newProperty = Date.now(); // test.newProperty 為新增屬性且是響應式
 // 再次對 reactiveState 賦值會失了原先引用的響應性連接
 // 例如 reactiveState = reactive({ count: 99 });
 

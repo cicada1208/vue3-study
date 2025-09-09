@@ -2,7 +2,7 @@
 import { ApiContent } from '@/infrastructure/models/api-content';
 import { ApiResult } from '@/infrastructure/models/api-result';
 import { Users } from '@/models/users';
-import type { NisPatInfo, INisPatInfo } from '@/models/nis-pat-info';
+import type { NisPatInfo } from '@/models/nis-pat-info';
 import { computed, ref, watch } from 'vue';
 import { until } from '@vueuse/core';
 import { useFetch } from '@/infrastructure/vueuse/useFetch';
@@ -28,7 +28,7 @@ import ndbRoutes from '@/services/ndb-routes';
 
 //#region useFetch
 
-const ndbUrlParams = ref<INisPatInfo>({ clinicalUnitId: 'SI' });
+const ndbUrlParams = ref<Partial<NisPatInfo>>({ clinicalUnitId: 'SI' });
 const ndbUrl = computed(
   () =>
     `${ndbRoutes.NisPatInfo.GetNisPatInfo}1?${new URLSearchParams(

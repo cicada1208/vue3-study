@@ -1,29 +1,14 @@
 import type { CancelTokenSource, AxiosRequestConfig } from 'axios';
 import axios from 'axios';
 
-export interface IApiContent<TRst = unknown> {
-  loading?: boolean;
-  rst?: TRst;
-  err?: boolean;
+export class ApiContent<TRst = unknown> {
+  loading: boolean = false;
+  rst: TRst = {} as TRst;
+  err: boolean = false;
   cancelTokenSource?: CancelTokenSource;
-}
 
-export class ApiContent<TRst = unknown> implements IApiContent<TRst> {
-  loading: boolean;
-  rst: TRst;
-  err: boolean;
-  cancelTokenSource: CancelTokenSource;
-
-  constructor({
-    loading = false,
-    rst = {} as TRst,
-    err = false,
-    cancelTokenSource = undefined
-  }: IApiContent<TRst> = {}) {
-    this.loading = loading;
-    this.rst = rst;
-    this.err = err;
-    this.cancelTokenSource = cancelTokenSource;
+  constructor(data?: Partial<ApiContent<TRst>>) {
+    Object.assign(this, data);
   }
 
   cancel(message?: string, config?: AxiosRequestConfig, request?: any): void {

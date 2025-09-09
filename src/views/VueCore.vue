@@ -216,7 +216,7 @@ counterStore.$onAction(
 const focusInput = useTemplateRef("focusInput");
 
 onMounted(() => {
-  focusInput.value.focus();
+  focusInput.value?.focus();
 });
 
 //#endregion

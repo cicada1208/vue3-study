@@ -11,7 +11,7 @@
     "erasableSyntaxOnly": true,
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true,
-    "strictNullChecks": false,
+    // "strictNullChecks": false, // 預設 true: nullable number 類型需定義為 number | null
     // "noImplicitAny": false // false: allow any when implicit
 
     "baseUrl": ".",

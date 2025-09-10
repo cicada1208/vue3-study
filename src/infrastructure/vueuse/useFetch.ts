@@ -1,41 +1,35 @@
-import type {
-  EventHookOn,
-  Fn,
-  MaybeRefOrGetter,
-  Stoppable
-} from '@vueuse/shared';
+import type { EventHookOn, Fn, Stoppable } from '@vueuse/shared';
 import {
   containsProp,
   createEventHook,
   toRef,
-  toValue,
   until,
   useTimeoutFn
 } from '@vueuse/shared';
-import type { ComputedRef, Ref } from 'vue';
-import { computed, isRef, ref, shallowRef, watch } from 'vue';
+import type { ComputedRef, Ref, MaybeRefOrGetter, ShallowRef } from 'vue';
+import { computed, isRef, ref, shallowRef, watch, toValue } from 'vue';
 import { defaultWindow } from '@vueuse/core';
 
 export interface UseFetchReturn<T> {
   /**
    * Indicates if the fetch request has finished
    */
-  isFinished: Ref<boolean>;
+  isFinished: Readonly<ShallowRef<boolean>>;
 
   /**
    * The statusCode of the HTTP fetch response
    */
-  statusCode: Ref<number | null>;
+  statusCode: ShallowRef<number | null>;
 
   /**
    * The raw response of the fetch response
    */
-  response: Ref<Response | null>;
+  response: ShallowRef<Response | null>;
 
   /**
    * Any fetch errors that may have occurred
    */
-  error: Ref<any>;
+  error: ShallowRef<any>;
 
   /**
    * The fetch response body on success, may either be JSON or text
@@ -45,7 +39,7 @@ export interface UseFetchReturn<T> {
   /**
    * Indicates if the request is currently being fetched.
    */
-  isFetching: Ref<boolean>;
+  isFetching: Readonly<Ref<boolean>>;
 
   /**
    * Indicates if the fetch request is able to be aborted
@@ -55,12 +49,12 @@ export interface UseFetchReturn<T> {
   /**
    * Indicates if the fetch request was aborted
    */
-  aborted: Ref<boolean>;
+  aborted: ShallowRef<boolean>;
 
   /**
    * Abort the fetch request
    */
-  abort: Fn;
+  abort: (reason?: any) => void;
 
   /**
    * Manually call the fetch
@@ -156,12 +150,22 @@ export interface AfterFetchContext<T = any> {
   response: Response;
 
   data: T | null;
+
+  context: BeforeFetchContext;
+
+  execute: (throwOnFailed?: boolean) => Promise<any>;
 }
 
 export interface OnFetchErrorContext<T = any, E = any> {
   error: E;
 
   data: T | null;
+
+  response: Response | null;
+
+  context: BeforeFetchContext;
+
+  execute: (throwOnFailed?: boolean) => Promise<any>;
 }
 
 export interface UseFetchOptions {
@@ -223,11 +227,9 @@ export interface UseFetchOptions {
    * Will run immediately after the fetch request is returned.
    * Runs after any 4xx and 5xx response
    */
-  onFetchError?: (ctx: {
-    data: any;
-    response: Response | null;
-    error: any;
-  }) => Promise<Partial<OnFetchErrorContext>> | Partial<OnFetchErrorContext>;
+  onFetchError?: (
+    ctx: OnFetchErrorContext
+  ) => Promise<Partial<OnFetchErrorContext>> | Partial<OnFetchErrorContext>;
 
   /**
    * Use shallowRef.
@@ -284,9 +286,10 @@ function isFetchOptions(obj: object): obj is UseFetchOptions {
   );
 }
 
+const reAbsolute = /^(?:[a-z][a-z\d+\-.]*:)?\/\//i;
 // A URL is considered absolute if it begins with "<scheme>://" or "//" (protocol-relative URL).
 function isAbsoluteURL(url: string) {
-  return /^([a-z][a-z\d+\-.]*:)?\/\//i.test(url);
+  return reAbsolute.test(url);
 }
 
 function headersToObject(headers: HeadersInit | undefined) {
@@ -305,7 +308,13 @@ function combineCallbacks<T = any>(
   if (combination === 'overwrite') {
     // use last callback
     return async (ctx: T) => {
-      const callback = callbacks[callbacks.length - 1];
+      let callback;
+      for (let i = callbacks.length - 1; i >= 0; i--) {
+        if (callbacks[i] != null) {
+          callback = callbacks[i];
+          break;
+        }
+      }
       if (callback) return { ...ctx, ...(await callback(ctx)) };
 
       return ctx;

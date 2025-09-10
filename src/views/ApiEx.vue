@@ -52,7 +52,7 @@ function modifyNdbUrlParams() {
   ndbUrlParams.value.clinicalUnitId = '9D';
 }
 
-const fetchUrl = ref('https://hub.dummyapis.com/delay?seconds=5');
+const fetchUrl = ref('https://httpbin.org/delay/10');
 const {
   data: fetchData,
   error: fetchError,
@@ -237,5 +237,3 @@ async function fetchUserContent2() {
     {{ 'userContentUser.userName:' + userContentUser.userName }} <br />
   </div>
 </template>
-
-<style scoped></style>

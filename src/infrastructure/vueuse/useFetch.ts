@@ -232,7 +232,7 @@ export interface UseFetchOptions {
   ) => Promise<Partial<OnFetchErrorContext>> | Partial<OnFetchErrorContext>;
 
   /**
-   * Use shallowRef.
+   * Use shallowRef data.
    *
    * @default true
    */

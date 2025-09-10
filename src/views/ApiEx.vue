@@ -43,6 +43,7 @@ const {
 } = useFetchNdb<ApiResult<NisPatInfo[]>>(ndbUrl, {
   immediate: false,
   shallow: false,
+  refetch: true,
   initialData: new ApiResult<NisPatInfo[]>({ Data: [] })
 })
   .get()

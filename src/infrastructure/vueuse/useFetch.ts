@@ -207,6 +207,7 @@ export interface UseFetchOptions {
 
   /**
    * Will run immediately before the fetch request is dispatched
+   * (先添加的會先執行)
    */
   beforeFetch?: (
     ctx: BeforeFetchContext
@@ -218,6 +219,7 @@ export interface UseFetchOptions {
   /**
    * Will run immediately after the fetch request is returned.
    * Runs after any 2xx response
+   * (先添加的會先執行)
    */
   afterFetch?: (
     ctx: AfterFetchContext
@@ -226,6 +228,7 @@ export interface UseFetchOptions {
   /**
    * Will run immediately after the fetch request is returned.
    * Runs after any 4xx and 5xx response
+   * (先添加的會先執行)
    */
   onFetchError?: (
     ctx: OnFetchErrorContext
@@ -751,7 +754,13 @@ export function useFetch<T>(
 }
 
 function joinPaths(start: string, end: string): string {
-  if (!start.endsWith('/') && !end.startsWith('/')) return `${start}/${end}`;
+  if (!start.endsWith('/') && !end.startsWith('/')) {
+    return `${start}/${end}`;
+  }
+
+  if (start.endsWith('/') && end.startsWith('/')) {
+    return `${start.slice(0, -1)}${end}`;
+  }
 
   return `${start}${end}`;
 }

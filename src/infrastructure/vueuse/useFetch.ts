@@ -440,12 +440,14 @@ export function useFetch<T>(
     timeout: 0,
     shallow: true
   };
+
   interface InternalConfig {
     method: HttpMethod;
     type: DataType;
     payload: unknown;
     payloadType?: string;
   }
+
   const config: InternalConfig = {
     method: 'GET',
     type: 'text' as DataType,
@@ -461,24 +463,27 @@ export function useFetch<T>(
     if (isFetchOptions(args[1])) options = { ...options, ...args[1] };
   }
 
-  const { fetch = defaultWindow?.fetch, initialData, timeout } = options;
+  const {
+    fetch = defaultWindow?.fetch ?? globalThis?.fetch,
+    initialData,
+    timeout
+  } = options;
 
   // Event Hooks
   const responseEvent = createEventHook<Response>();
   const errorEvent = createEventHook<any>();
   const finallyEvent = createEventHook<any>();
 
-  const isFinished = ref(false);
-  const isFetching = ref(false);
-  const aborted = ref(false);
-  const statusCode = ref<number | null>(null);
+  const isFinished = shallowRef(false);
+  const isFetching = shallowRef(false);
+  const aborted = shallowRef(false);
+  const statusCode = shallowRef<number | null>(null);
   const response = shallowRef<Response | null>(null);
   const error = shallowRef<any>(null);
-  // setting shallowRef or ref data
   // const data = shallowRef<T | null>(initialData || null);
+  // setting shallowRef or ref data
   const data = (options.shallow ? shallowRef : ref)<T | null>(
-    (initialData ? JSON.parse(JSON.stringify(initialData)) : initialData) ||
-      null
+    deepClone(initialData) ?? null
   ) as Ref<T | null>;
 
   const canAbort = computed(() => supportsAbort && isFetching.value);
@@ -763,4 +768,19 @@ function joinPaths(start: string, end: string): string {
   }
 
   return `${start}${end}`;
+}
+
+function deepClone<T>(value: T): T {
+  if (typeof structuredClone === 'function') {
+    try {
+      return structuredClone(value);
+    } catch {
+      // structuredClone 不支援的類型（如 function）
+      return value;
+    }
+  }
+
+  // fallback
+  if (value === undefined) return value;
+  return JSON.parse(JSON.stringify(value)) as T;
 }

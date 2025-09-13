@@ -7,7 +7,15 @@ import {
   useTimeoutFn
 } from '@vueuse/shared';
 import type { ComputedRef, Ref, MaybeRefOrGetter, ShallowRef } from 'vue';
-import { computed, isRef, ref, shallowRef, watch, toValue } from 'vue';
+import {
+  computed,
+  isRef,
+  ref,
+  shallowRef,
+  watch,
+  toValue,
+  readonly
+} from 'vue';
 import { defaultWindow } from '@vueuse/core';
 
 export interface UseFetchReturn<T> {
@@ -502,7 +510,7 @@ export function useFetch<T>(
       controller = new AbortController();
       controller.signal.onabort = () => {
         aborted.value = true;
-        loading(false);
+        // loading(false);
       };
 
       fetchOptions = {
@@ -515,6 +523,7 @@ export function useFetch<T>(
   if (timeout) timer = useTimeoutFn(abort, timeout, { immediate: false });
 
   let executeCounter = 0;
+
   const execute = async (throwOnFailed = false) => {
     abort();
 
@@ -523,23 +532,28 @@ export function useFetch<T>(
     statusCode.value = null;
     aborted.value = false;
 
+    // 修正連續執行 execute() 時，因 fetch 監聽 AbortController.signal 為非同步，導致 isFetching、isFinished、aborted 狀態不正確。
+    executeCounter += 1;
+    const currentExecuteCounter = executeCounter;
+
     const defaultFetchOptions: RequestInit = {
       method: config.method,
       headers: {}
     };
 
-    if (config.payload) {
+    const payload = toValue(config.payload);
+    if (payload) {
       const headers = headersToObject(defaultFetchOptions.headers) as Record<
         string,
         string
       >;
-      const payload = toValue(config.payload);
-      // Set the payload to json type only if it's not provided and a literal object is provided and the object is not `formData`
+      // Set the payload to json type only if it's not provided and a literal object or array is provided and the object is not `formData`
       // The only case we can deduce the content type and `fetch` can't
+      const proto = Object.getPrototypeOf(payload);
       if (
         !config.payloadType &&
         payload &&
-        Object.getPrototypeOf(payload) === Object.prototype &&
+        (proto === Object.prototype || Array.isArray(proto)) &&
         !(payload instanceof FormData)
       )
         config.payloadType = 'json';
@@ -577,88 +591,82 @@ export function useFetch<T>(
 
     let responseData: any = null;
 
-    timer?.start();
+    if (timer) {
+      timer.stop();
+      timer.start();
+    }
 
-    // 修正連續執行 execute() 時，因 abort() 當中的 AbortController 實際為非同步，
-    // 導致 isFetching、isFinished、aborted 狀態不正確。
-    executeCounter += 1;
-    const currentExecuteCounter = executeCounter;
-    return new Promise<Response | null>((resolve, reject) => {
-      fetch(context.url, {
-        ...defaultFetchOptions,
-        ...context.options,
-        headers: {
-          ...headersToObject(defaultFetchOptions.headers),
-          ...headersToObject(context.options?.headers)
-        }
+    return fetch(context.url, {
+      ...defaultFetchOptions,
+      ...context.options,
+      headers: {
+        ...headersToObject(defaultFetchOptions.headers),
+        ...headersToObject(context.options?.headers)
+      }
+    })
+      .then(async fetchResponse => {
+        response.value = fetchResponse;
+        statusCode.value = fetchResponse.status;
+
+        responseData = await fetchResponse.clone()[config.type]();
+
+        // see: https://www.tjvantoll.com/2015/09/13/fetch-and-errors/
+        if (!fetchResponse.ok) throw new Error(fetchResponse.statusText);
+
+        if (options.afterFetch)
+          ({ data: responseData } = await options.afterFetch({
+            data: responseData,
+            response: fetchResponse,
+            context,
+            execute
+          }));
+
+        data.value = responseData;
+        error.value = null; // 若殘留上次的值易生混淆
+        responseEvent.trigger(fetchResponse);
+
+        return fetchResponse;
       })
-        .then(async fetchResponse => {
-          response.value = fetchResponse;
-          statusCode.value = fetchResponse.status;
+      .catch(async fetchError => {
+        // 取消不當作錯誤，data、error 保留上次的值，同 beforeFetch 中執行 cancel()
+        if (fetchError.name === 'AbortError')
+          console.log('Abort:', fetchError.message || fetchError.name);
+        else {
+          // 以後端的 error response data 為主
+          let errorData = responseData || fetchError.message || fetchError.name;
 
-          responseData = await fetchResponse[config.type]();
+          if (options.onFetchError) {
+            ({ data: responseData, error: errorData } =
+              await options.onFetchError({
+                data: responseData,
+                error: fetchError,
+                response: response.value,
+                context,
+                execute
+              }));
 
-          // see: https://www.tjvantoll.com/2015/09/13/fetch-and-errors/
-          if (!fetchResponse.ok) throw new Error(fetchResponse.statusText);
+            // 若有設定 onFetchError，以 responseData 為主
+            data.value = responseData ?? deepClone(initialData) ?? null;
+          } else data.value = deepClone(initialData) ?? null; // 若殘留上次的值易生混淆
 
-          if (options.afterFetch)
-            ({ data: responseData } = await options.afterFetch({
-              data: responseData,
-              response: fetchResponse
-            }));
+          error.value = errorData;
+          errorEvent.trigger(fetchError);
+        }
 
-          data.value = responseData;
-          error.value = null; // 若殘留上次的值易生混淆
-          responseEvent.trigger(fetchResponse);
+        if (throwOnFailed) throw fetchError;
+        return null;
+      })
+      .finally(() => {
+        if (currentExecuteCounter === executeCounter) {
+          loading(false);
+        }
 
-          return resolve(fetchResponse);
-        })
-        .catch(async fetchError => {
-          // 取消不當作錯誤，data、error 保留上次的值，同 beforeFetch 中執行 cancel()
-          if (fetchError.name === 'AbortError')
-            console.log('Abort:', fetchError.message || fetchError.name);
-          else {
-            // 以後端的 error response data 為主
-            let errorData =
-              responseData || fetchError.message || fetchError.name;
+        if (timer) {
+          timer.stop();
+        }
 
-            if (options.onFetchError) {
-              ({ data: responseData, error: errorData } =
-                await options.onFetchError({
-                  data: responseData,
-                  error: fetchError,
-                  response: response.value
-                }));
-
-              // 若有設定 onFetchError，以 responseData 為主
-              data.value =
-                responseData ||
-                (initialData
-                  ? JSON.parse(JSON.stringify(initialData))
-                  : initialData) ||
-                null;
-            } else
-              data.value =
-                (initialData
-                  ? JSON.parse(JSON.stringify(initialData))
-                  : initialData) || null; // 若殘留上次的值易生混淆
-
-            error.value = errorData;
-            errorEvent.trigger(fetchError);
-          }
-
-          if (throwOnFailed) return reject(fetchError);
-          return resolve(null);
-        })
-        .finally(() => {
-          if (currentExecuteCounter === executeCounter) {
-            loading(false);
-            timer?.stop();
-          }
-
-          finallyEvent.trigger(null);
-        });
-    });
+        finallyEvent.trigger(null);
+      });
   };
 
   const refetch = toRef(options.refetch);
@@ -667,12 +675,12 @@ export function useFetch<T>(
   });
 
   const shell: UseFetchReturn<T> = {
-    isFinished,
+    isFinished: readonly(isFinished),
+    isFetching: readonly(isFetching),
     statusCode,
     response,
     error,
     data,
-    isFetching,
     canAbort,
     aborted,
     abort,
@@ -729,7 +737,7 @@ export function useFetch<T>(
       until(isFinished)
         .toBe(true)
         .then(() => resolve(shell))
-        .catch(error => reject(error));
+        .catch(reject);
     });
   }
 

@@ -649,14 +649,14 @@ export function useFetch<T>(
                 execute
               }));
 
-            // 若有設定 onFetchError，以 responseData 為主
+            // 若有設定 onFetchError，以 onFetchError 的 responseData 為主
             data.value = responseData ?? deepClone(initialData) ?? null;
           } else data.value = deepClone(initialData) ?? null;
 
           error.value = errorData;
-          errorEvent.trigger(fetchError);
         }
 
+        errorEvent.trigger(fetchError);
         if (throwOnFailed) throw fetchError;
         return null;
       })

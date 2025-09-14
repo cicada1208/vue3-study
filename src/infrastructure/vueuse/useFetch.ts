@@ -723,7 +723,7 @@ export function useFetch<T>(
         }
 
         return {
-          // 該物件加入 then 方法，就被認定為 Thenable，可被
+          // 該物件加入 then 方法，就被認定為 Thenable，可被 await
           ...shell,
           then(onFulfilled: any, onRejected: any) {
             return waitUntilFinished().then(onFulfilled, onRejected);

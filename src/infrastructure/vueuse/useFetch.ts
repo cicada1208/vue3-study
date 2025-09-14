@@ -451,8 +451,11 @@ export function useFetch<T>(
 
   interface InternalConfig {
     method: HttpMethod;
+    /** will call response.json() when type === 'json' */
     type: DataType;
+    /** request's body */
     payload: unknown;
+    /** request's headers['Content-Type'] */
     payloadType?: string;
   }
 
@@ -528,11 +531,11 @@ export function useFetch<T>(
     abort();
 
     loading(true);
+    aborted.value = false;
     error.value = null;
     statusCode.value = null;
-    aborted.value = false;
 
-    // 修正連續執行 execute() 時，因 fetch 監聽 AbortController.signal 為非同步，導致 isFetching、isFinished、aborted 狀態不正確。
+    // executeCounter：修正連續執行 execute() 時，因 fetch 監聽 AbortController.signal 收到 abort 訊號後，進入 fetch.catch，為非同步，導致 isFetching、isFinished、aborted 狀態不正確。
     executeCounter += 1;
     const currentExecuteCounter = executeCounter;
 
@@ -622,7 +625,7 @@ export function useFetch<T>(
           }));
 
         data.value = responseData;
-        error.value = null; // 若殘留上次的值易生混淆
+        error.value = null;
         responseEvent.trigger(fetchResponse);
 
         return fetchResponse;
@@ -633,7 +636,8 @@ export function useFetch<T>(
           console.log('Abort:', fetchError.message || fetchError.name);
         else {
           // 以後端的 error response data 為主
-          let errorData = responseData || fetchError.message || fetchError.name;
+          let errorData =
+            responseData ?? (fetchError.message || fetchError.name);
 
           if (options.onFetchError) {
             ({ data: responseData, error: errorData } =
@@ -647,7 +651,7 @@ export function useFetch<T>(
 
             // 若有設定 onFetchError，以 responseData 為主
             data.value = responseData ?? deepClone(initialData) ?? null;
-          } else data.value = deepClone(initialData) ?? null; // 若殘留上次的值易生混淆
+          } else data.value = deepClone(initialData) ?? null;
 
           error.value = errorData;
           errorEvent.trigger(fetchError);
@@ -659,10 +663,7 @@ export function useFetch<T>(
       .finally(() => {
         if (currentExecuteCounter === executeCounter) {
           loading(false);
-        }
-
-        if (timer) {
-          timer.stop();
+          if (timer) timer.stop();
         }
 
         finallyEvent.trigger(null);
@@ -722,6 +723,7 @@ export function useFetch<T>(
         }
 
         return {
+          // 該物件加入 then 方法，就被認定為 Thenable，可被
           ...shell,
           then(onFulfilled: any, onRejected: any) {
             return waitUntilFinished().then(onFulfilled, onRejected);

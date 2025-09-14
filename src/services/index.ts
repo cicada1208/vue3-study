@@ -125,14 +125,16 @@ hrApi.axios.interceptors.response.use(
 const useFetchNdb = createFetch({
   baseUrl: apiUrl.ndb,
   options: {
-    // async beforeFetch({ options }) {
+    // async beforeFetch({ options, cancel }) {
     //   const myToken = await getMyToken();
+    //   if (!myToken)
+    //     cancel();
     //   options.headers.Authorization = `Bearer ${myToken}`;
     //   return { options };
-    // }
+    // },
     onFetchError(ctx) {
       ctx.data =
-        ctx.data ||
+        ctx.data ??
         new ApiResult({
           Code: ctx.response?.status,
           Msg: ctx.error?.message || ctx.error?.name

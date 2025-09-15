@@ -513,7 +513,7 @@ export function useFetch<T>(
       controller = new AbortController();
       controller.signal.onabort = () => {
         aborted.value = true;
-        loading(false);
+        // loading(false);
       };
 
       fetchOptions = {

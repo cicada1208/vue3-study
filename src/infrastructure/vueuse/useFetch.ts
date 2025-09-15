@@ -508,12 +508,12 @@ export function useFetch<T>(
   };
 
   const abort = (reason?: any) => {
-    if (supportsAbort) {
+    if (canAbort.value) {
       controller?.abort(reason);
       controller = new AbortController();
       controller.signal.onabort = () => {
         aborted.value = true;
-        // loading(false);
+        loading(false);
       };
 
       fetchOptions = {

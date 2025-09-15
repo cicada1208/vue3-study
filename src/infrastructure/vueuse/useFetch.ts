@@ -508,7 +508,7 @@ export function useFetch<T>(
   };
 
   const abort = (reason?: any) => {
-    if (canAbort.value) {
+    if (supportsAbort) {
       controller?.abort(reason);
       controller = new AbortController();
       controller.signal.onabort = () => {

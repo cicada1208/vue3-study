@@ -8,7 +8,8 @@ import { useCounterStore } from '@/stores/counter';
 
 //#region reactive
 
-// reactive：建立響應式物件或陣列
+// reactive：
+// 建立響應式物件或陣列
 // 對物件類型有效：物件、陣列、Map、Set 集合類型
 // 對原始型別無效：string、number、boolean
 const reactiveState = reactive({
@@ -18,11 +19,11 @@ const reactiveState = reactive({
 
 // reactive 的響應是透過 JavaScript Proxy：
 // 只有 property 能追蹤響應
-// 能攔截新增屬性、刪除屬性、讀取屬性、修改屬性
-// 例如 const test = reactive({}); // ref({}) 亦同
+// 能攔截新增屬性、刪除屬性、讀取屬性、修改屬性，例如
+// const test = reactive({}); // ref({}) 亦同
 // test.newProperty = Date.now(); // test.newProperty 為新增屬性且是響應式
-// 再次對 reactiveState 賦值會失了原先引用的響應性連接
-// 例如 reactiveState = reactive({ count: 99 });
+// 再次對 reactiveState 賦值會失了原先引用的響應性連接，例如
+// reactiveState = reactive({ count: 99 });
 
 const { count: reactiveCount, obj: reactiveObj } = reactiveState;
 
@@ -34,11 +35,13 @@ function reactiveStateIncrement() {
 
 //#endregion
 
-//#region watch
+//#region watch & watchEffect
 
 // watch & watchEffect：
-// 非同步：會有 race condition，需做 cancel 機制
-// callback 觸發時機：父組件更新之後，所屬組件 DOM 更新之前調用。若要訪問更新之後的所屬組件 DOM，需使用 flush: 'post' or watchPostEffect()
+// 非同步會有 race condition，需做 cancel 機制
+// callback 觸發時機：
+// 父組件更新之後，所屬組件 DOM 更新之前調用
+// 若要訪問更新之後的所屬組件 DOM，watch 需使用 flush: 'post' or watchPostEffect()
 
 // watch：
 // 明確追蹤響應式依賴，並在依賴變化時重新執行
@@ -48,7 +51,7 @@ watch(reactiveState, newState => console.log('reactiveState:', newState));
 
 // watch() 或組合式函式 useXXX() 傳入參數：
 // 無法保持響應性：傳入值 reactiveState.count
-// 可保持響應性：傳入 getter funtion，如下
+// 可保持響應性：傳入 reactive、ref、getter，如下
 // watch(() => reactiveState.count, (newCount) => {
 //   console.log(`reactiveState.count: ${newCount}`)
 // })
@@ -71,7 +74,8 @@ watchEffect(async () => {
 
 //#region ref
 
-// ref：建立響應式任意類型的值
+// ref：
+// 建立響應式任意類型的值
 // 並能在不丟失響應性的前提下傳遞這些引用
 // const year = ref<string | number>('2020') // 覆蓋默認類型推導
 const refState = ref({
@@ -99,7 +103,7 @@ watch(refState.value, newState => console.log('refState:', newState));
 
 //#region computed
 
-// computed property getter：
+// computed property：
 // 描述響應式狀態的複雜邏輯
 // 計算值會被緩存，響應式依賴更新時才重算
 // 不可做：改變其他響應狀態、非同步請求、更改 DOM
@@ -130,7 +134,7 @@ const lastNameModel = ref('last name');
 //#region lifecycle
 
 // onErrorCaptured:
-// 捕獲後代組件傳遞錯誤時調用
+// 捕獲後代組件錯誤
 // 默認情況下錯誤由組件繼承鏈向上傳遞 (bubble)，直到 app.config.errorHandler；除非 return false 表示已處理
 onErrorCaptured((err, istance, info) => {
   console.error('onErrorCaptured [err]:', err);

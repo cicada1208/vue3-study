@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import injections from '@/consts/injections';
+import injections, { type ILocationInjection } from '@/consts/injections';
 import { inject, ref, useAttrs, watchEffect } from 'vue';
 
 //#region props
@@ -11,8 +11,8 @@ import { inject, ref, useAttrs, watchEffect } from 'vue';
 //   obj?: { title: string }
 // }>();
 const { count, obj, propWithDefault = ['one', 'two'] } = defineProps<{
-  count?: number
-  obj?: { title: string },
+  count: number
+  obj: { title: string },
   propWithDefault?: Array<string>
 }>();
 
@@ -85,7 +85,7 @@ console.log('attrs:', attrs);
 
 //#region provide / inject
 
-const { location, updateLocation } = inject(injections.location);
+const { location, updateLocation } = inject(injections.location) as ILocationInjection; // 若確有 provide 可斷言，但若未 provide 會出錯，除非給預值
 
 //#endregion
 

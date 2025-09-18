@@ -53,7 +53,7 @@ const emit = defineEmits<{
 //   (e: 'update:modelValue', modelValue: string): void
 // }>();
 // 上式等同下式簡寫
-const name = defineModel();
+const name = defineModel<string>();
 const [lastName, lastNameModifiers] = defineModel<string>('lastName', {
   required: true,
   set(value) {
@@ -69,7 +69,7 @@ const [lastName, lastNameModifiers] = defineModel<string>('lastName', {
 //#region attrs
 
 // attrs:
-// 透傳 attributes：未被該組件聲明為 props、emits 的 attributes，例如 class、style、id
+// 透傳 attributes：未被該組件聲明為 props、emits 則歸於 attributes，例如 class、style、id
 // 非響應式
 // 組件僅單一根元素：attributes (含 v-on 監聽器)會自動加入根元素
 const attrs = useAttrs();
@@ -85,7 +85,7 @@ console.log('attrs:', attrs);
 
 //#region provide / inject
 
-const { location, updateLocation } = inject(injections.location) as ILocationInjection; // 若確有 provide 可斷言，但若未 provide 會出錯，除非給預值
+const { location, updateLocation } = inject(injections.location) as ILocationInjection; // 若確有 provide 可斷言，但實際若未 provide 會出錯，除非給預值
 
 //#endregion
 

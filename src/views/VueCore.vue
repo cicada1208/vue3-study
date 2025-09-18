@@ -96,7 +96,7 @@ function refStateIncrement() {
   // 現在 DOM 已更新
 }
 
-watch(refState.value, newState => console.log('refState:', newState));
+watch(refState.value, newState => console.log('refState:', newState)); // ref 深層監聽
 // watch(refState, newState => console.log(newState), { deep: true }); // 結果同上
 
 //#endregion
@@ -300,7 +300,7 @@ function invertTheme() {
       {{ prop.count }}
     </button>
     <CustomComponent :count="prop.count" :obj="prop.obj"
-      @custom-event="console.log('listen custom-event with id: ', $event)" v-model.trim="nameModel"
+      @custom-event="console.log('listen custom-event with id parameter: ', $event)" v-model.trim="nameModel"
       v-model:last-name.capitalize="lastNameModel" attr-var="attr-var-value" @attr-event=""
       v-model:attr-model="nameModel" style="background-color:darkslategrey;" />
     {{ 'nameModel: ' + nameModel }} <br />

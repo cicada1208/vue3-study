@@ -1,18 +1,27 @@
-// @use 與 @import 不同之處:
-// # 無論在項目中使用多少次 @use 'module' 該 module 只會 imported once。
-// # private members: _ 或 - 開頭的 variable、mixin、function，無法引用。
-// # public members:
-//   需透過 namespace 在當前文件引用，但不會傳遞給之後引用的文件。
-//   例如當前文件 main.scss @use 'color' 在當前文件即可引用 color.$color-terra-cotta；
-//   但若 Home.vue @use 'main'，無法引用 main.$color-terra-cotta，需以 @forward 傳遞。
+// - 相較於 @import，無論在項目中使用多少次 @use 'module' 該 module 只會載入一次
+// - 可區分 private / public members (variable、mixin、function)
+//     - private members：_ 或 - 開頭的 variable、mixin、function，無法外部引用
+//     - public members：需透過 namespace 引用，可避免 variable、mixin、function 全域覆蓋的狀況
+// - @use 規則需置頂，可透過如下設定
+//     - vue2 vue-cli loaderOptions.scss.additionalData
+//     - vue3 vite preprocessorOptions.scss.additionalData
+// - `_color.scss`：_ 開頭的檔案 sass 不會將其編譯成 css
 
-// _color.scss: _ 開頭的檔案 sass 不會將其編譯成 css。
+// ``` scss
+// // main.scss
 
-// @forward:
-// 可將 module _color、_text 的 public members
-// 傳遞至入口文件 main，爾後其他文件引用 @use 'main'
-// 便可以 namespace main 引用 public members。
-// @forward 'module' 中若有 css 也只是被傳遞，直至以 @use 使用時才會被編譯出來。
+// // 公開成員是透過 @forward 傳遞，不是 @use
+// // 將 color 的公開成員 forward 給其他使用者（e.g. Home.vue）
+// // in Home.vue @use 'main' 才可透過 main.$color-terra-cotta 取值
+// @forward 'color';
+
+// // main.scss 自己要用 color 的公開成員
+// @use 'color'; // or @use 'color' as c;
+
+// .button {
+//   background-color: color.$color-terra-cotta;
+// }
+// ```
 
 @forward 'transition';
 @forward 'position';
